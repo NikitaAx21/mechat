@@ -24,5 +24,16 @@ namespace Chain
         {
             InitializeComponent();
         }
+
+        private void CenterCircleSetPosition(object sender, RoutedEventArgs e)
+        {
+            var halfWidth = Canvas.ActualWidth / 2 - CenterCircle.ActualWidth / 2;
+            var halfHeight = Canvas.ActualHeight / 2 - CenterCircle.ActualHeight / 2;
+            CenterCircle.Margin = new Thickness(halfWidth, halfHeight, halfWidth, halfHeight);
+        }
+
+        private void OnCenterClicked(object sender, MouseButtonEventArgs e)
+        {
+        }
     }
 }
