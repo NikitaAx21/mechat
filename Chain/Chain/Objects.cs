@@ -8,23 +8,18 @@ namespace Chain
 {
     class Object
     {
-
         public bool mass_center;
         public int mass;
         
         public Object()
         {
-
             mass_center = false;
-            mass=0;
-            
-        }
-                
+            mass=0;            
+        }                
     }
        
     class Segment : Object
-    {
-        
+    {        
         public int length;
 
         public bool visibility;
@@ -36,26 +31,24 @@ namespace Chain
 
             visibility = true;
             efemerik = false;
-
         }
-
     }
 
     class Joint : Object
-    {
-      
+    {      
         public bool angle_restriction;
-        public int angle_restriction1;
-        public int angle_restriction2;
+        public int current_angle;
+        public int angle_restriction_left;
+        public int angle_restriction_right;
 
         public Joint()
         {
+            current_angle = 0;
+
             angle_restriction = false;
 
-            angle_restriction1=0;
-            angle_restriction2=0;
-
+            angle_restriction_left = 0;
+            angle_restriction_right = 0;
         }
-
     }
 }
