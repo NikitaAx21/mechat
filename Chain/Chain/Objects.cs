@@ -6,14 +6,23 @@ using System.Threading.Tasks;
 
 namespace Chain
 {
+
+    struct Point
+    {
+        public int x;
+        public int y;
+    }
+
     class Object
     {
-        public bool mass_center;
+        public bool mass_center_visible;
         public int mass;
-        
+
+        public Point mass_center;
+
         public Object()
         {
-            mass_center = false;
+            mass_center_visible = false;
             mass=0;            
         }                
     }
