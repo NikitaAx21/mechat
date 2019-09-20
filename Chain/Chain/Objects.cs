@@ -18,8 +18,6 @@ namespace Chain
         public bool mass_center_visible;
         public int mass;
 
-        public Point mass_center;
-
         public Object()
         {
             mass_center_visible = false;
@@ -29,14 +27,19 @@ namespace Chain
        
     class Segment : Object
     {        
-        public int length;
+        //public int length;
+
+        public Point vector;//пересчёт из длины и угла предыдущего сустава
+
 
         public bool visibility;
         public bool efemerik;
 
         public Segment()
         {
-            length=2;
+            //length=2;
+            vector.x = 0;
+            vector.y = 2;
 
             visibility = true;
             efemerik = false;
@@ -45,8 +48,9 @@ namespace Chain
 
     class Joint : Object
     {      
-        public bool angle_restriction;
         public int current_angle;
+
+        public bool angle_restriction;
         public int angle_restriction_left;
         public int angle_restriction_right;
 
