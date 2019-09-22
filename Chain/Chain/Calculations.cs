@@ -17,55 +17,47 @@ namespace Chain
             int Y_coord=0;
             int Mass=0;
 
-
-
-
-            Mass += List[0].mass;
-
-
-
-            for (int i = 1; i < List.Count; i++)
+                                   
+            for (int i = 0; i < List.Count; i++)
             {
-
                 Mass += List[i].mass;
 
-                Segment S = List[i] as Segment;
-                if (S != null)
+                Joint J = List[i] as Joint;
+                if (J != null)
                 {
-                    if (i != 1)
+                    if (i == 0)
                     {
-                        Segment S0 = List[i-1] as Segment;
-
-
-                        X_coord += (S.vector.x + S0.vector.x) / 2 * List[i].mass;//---
-                        Y_coord += (S.vector.y + S0.vector.y) / 2 * List[i].mass;//---
+                        X_coord += Default_x * List[i].mass;//---
+                        Y_coord += Default_y * List[i].mass;//---
                     }
                     else
                     {
-                        X_coord += (S.vector.x + Default_x) / 2 * List[i].mass;//---
-                        Y_coord += (S.vector.y + Default_y) / 2 * List[i].mass;//---
+                        Segment S = List[i - 1] as Segment;
 
+                        X_coord += S.vector.x * List[i].mass;
+                        Y_coord += S.vector.y * List[i].mass;
                     }
-
-                   
                 }
                 else
                 {
-                    S = List[i-1] as Segment;
+                    Segment S = List[i] as Segment;
 
-                    X_coord += S.vector.x * List[i].mass;
-                    Y_coord += S.vector.y * List[i].mass;
+                    if (i == 1)
+                    {
+                        X_coord += (S.vector.x + Default_x) / 2 * List[i].mass;//---
+                        Y_coord += (S.vector.y + Default_y) / 2 * List[i].mass;//---
+                    }
+                    else
+                    {
+                        Segment S0 = List[i - 2] as Segment;
 
+                        X_coord += (S.vector.x + S0.vector.x) / 2 * List[i].mass;
+                        Y_coord += (S.vector.y + S0.vector.y) / 2 * List[i].mass;
+                    }
                 }
-
-              
-               
-
-
             }
 
-
-
+            
             X_coord = X_coord / Mass;
             Y_coord = Y_coord / Mass;
 
@@ -76,7 +68,5 @@ namespace Chain
 
             return all_mass_center;
         }
-
-
     }
 }
