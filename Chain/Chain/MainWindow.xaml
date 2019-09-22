@@ -5,16 +5,26 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:Chain"
 		mc:Ignorable="d"
-		Title="MainWindow"
-		MinWidth="50"
-		MinHeight="50"
+		Title="Manipulator"
+		x:Name="Window"
+		MinWidth="400"
+		MinHeight="100"
 		Height="450"
 		Width="800">
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	</Window.Resources>
 	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
 		<Border Margin="20"
+				Grid.Column="0"
 				BorderThickness="1"
 				BorderBrush="Gray"
 				CornerRadius="2"
+				HorizontalAlignment="Stretch"
 				Background="Transparent">
 			<Canvas VerticalAlignment="Stretch"
 					HorizontalAlignment="Stretch"
@@ -43,5 +53,79 @@
 				</Ellipse>
 			</Canvas>
 		</Border>
+		<!--Панель настройки-->
+		<Grid Grid.Column="1"
+			  Margin="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Border Background="Aquamarine"
+					Grid.Column="0"
+					HorizontalAlignment="Right"
+					Visibility="{Binding Path=IsPanelVisible, ElementName=Window, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
+					CornerRadius="2,0,0,2"
+					BorderThickness="1,1,0,1"
+					BorderBrush="DarkGray"
+					Width="250">
+				<StackPanel HorizontalAlignment="Stretch"
+							Margin="20,20,0,20">
+					<TextBlock FontSize="12"
+							   Foreground="Black"
+							   TextAlignment="Center"
+							   Text="Настройка параметров объекта" />
+				</StackPanel>
+			</Border>
+			<!--Кнопка скрытия-раскрытия панели-->
+			<Button Width="20"
+					Grid.Column="1"
+					HorizontalAlignment="Right"
+					Click="ShowHideMenu"
+					Padding="0"
+					Content=">"
+					VerticalAlignment="Stretch">
+				<Button.Template>
+					<ControlTemplate>
+						<Border BorderBrush="DarkGray">
+							<Border.Style>
+								<Style TargetType="Border">
+									<Setter Property="CornerRadius"
+											Value="2" />
+									<Setter Property="BorderThickness"
+											Value="1" />
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding Path=IsPanelVisible, ElementName=Window}"
+													 Value="True">
+											<Setter Property="CornerRadius"
+													Value="0,2,2,0" />
+											<Setter Property="BorderThickness"
+													Value="0,1,1,1" />
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</Border.Style>
+							<Grid>
+								<Border Background="Aquamarine">
+									<Border.Style>
+										<Style TargetType="Border">
+											<Style.Triggers>
+												<Trigger Property="IsMouseOver"
+														 Value="True">
+													<Setter Property="Opacity"
+															Value=".5" />
+												</Trigger>
+											</Style.Triggers>
+										</Style>
+									</Border.Style>
+								</Border>
+								<TextBlock Text="{TemplateBinding Button.Content}"
+										   VerticalAlignment="Center"
+										   HorizontalAlignment="Center" />
+							</Grid>
+						</Border>
+					</ControlTemplate>
+				</Button.Template>
+			</Button>
+		</Grid>
 	</Grid>
 </Window>

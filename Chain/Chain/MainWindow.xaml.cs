@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Chain
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         public MainWindow()
         {
+            IsPanelVisible = true;
             InitializeComponent();
+        }
+
+        public bool IsPanelVisible { get ; set; }
+
+        public Object SelectedObject
+        {
+            get => new Object(); //костыль. пока не будет нормальный выбор элементов
         }
 
         private void CenterCircleSetPosition(object sender, RoutedEventArgs e)
@@ -34,6 +33,29 @@ namespace Chain
 
         private void OnCenterClicked(object sender, MouseButtonEventArgs e)
         {
+        }
+
+        private void ShowHideMenu(object sender, RoutedEventArgs e)
+        {
+            if (SelectedObject == null)
+                return;
+
+            else
+            {
+                IsPanelVisible = !IsPanelVisible;
+                OnPropertyChanged($"IsPanelVisible");
+                var button = sender as Button;
+                if (button == null)
+                    return;
+                button.Content = IsPanelVisible ? ">" : "<";
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
