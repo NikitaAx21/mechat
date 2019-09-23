@@ -1,67 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows;
 
 namespace Chain
 {
-
-    struct Point
+    public class Object
     {
-        public int x;
-        public int y;
-    }
-
-    class Object
-    {
-        public bool mass_center_visible;
-        public int mass;
+        public bool IsMassCenterVisible;
+        public double Mass;
 
         public Object()
         {
-            mass_center_visible = false;
-            mass=0;            
-        }                
+            IsMassCenterVisible = false;
+            Mass = 0;
+        }
     }
-       
-    class Segment : Object
-    {        
+
+    public class Segment : Object
+    {
         //public int length;
 
-        public Point vector;//пересчёт из длины и угла предыдущего сустава
+        public Point Vector; //пересчёт из длины и угла предыдущего сустава
 
 
-        public bool visibility;
-        public bool efemerik;
+        public bool Visibility;
+        public bool Efemerik;
 
         public Segment()
         {
             //length=2;
-            vector.x = 0;
-            vector.y = 2;
+            Vector.X = 0;
+            Vector.Y = 2;
 
-            visibility = true;
-            efemerik = false;
+            Visibility = true;
+            Efemerik = false;
         }
     }
 
-    class Joint : Object
-    {      
-        public int current_angle;
+    internal class Joint : Object
+    {
+        public double CurrentAngle;
 
-        public bool angle_restriction;
-        public int angle_restriction_left;
-        public int angle_restriction_right;
+        public bool IsAngleRestricted;
+        public double AngleRestrictionLeft;
+        public double AngleRestrictionRight;
 
         public Joint()
         {
-            current_angle = 0;
+            CurrentAngle = 0;
 
-            angle_restriction = false;
+            IsAngleRestricted = false;
 
-            angle_restriction_left = 0;
-            angle_restriction_right = 0;
+            AngleRestrictionLeft = 0;
+            AngleRestrictionRight = 0;
         }
     }
 }

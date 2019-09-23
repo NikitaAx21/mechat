@@ -38,6 +38,7 @@
 						 MouseDown="OnCenterClicked"
 						 Stroke="DarkGray"
 						 StrokeThickness="1"
+						 Cursor="{x:Static Cursors.Hand}"
 						 Fill="Green">
 					<Ellipse.Style>
 						<Style TargetType="Ellipse">
@@ -83,6 +84,7 @@
 					Click="ShowHideMenu"
 					Padding="0"
 					Content=">"
+					Cursor="{x:Static Cursors.Hand}"
 					VerticalAlignment="Stretch">
 				<Button.Template>
 					<ControlTemplate>

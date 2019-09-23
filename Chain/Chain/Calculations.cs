@@ -1,41 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Windows;
 
 namespace Chain
 {
-    
-
-    class Calculations
+    public class Calculations
     {
-
         public Point Mass_center(List<Object> List)
         {
-            int X_coord=0;
-            int Y_coord=0;
-            int Mass=0;
+            double coordX = 0;
+            double CoordY = 0;
+            double Mass = 0;
 
-                                   
+            double defaultX = 0;
+            double defaultY = 0;
+
+
             for (int i = 0; i < List.Count; i++)
             {
-                Mass += List[i].mass;
+                Mass += List[i].Mass;
 
-                Joint J = List[i] as Joint;
+                var J = List[i] as Joint;
                 if (J != null)
                 {
                     if (i == 0)
                     {
-                        X_coord += Default_x * List[i].mass;//---
-                        Y_coord += Default_y * List[i].mass;//---
+                        coordX += defaultX * List[i].Mass; //---
+                        CoordY += defaultY * List[i].Mass; //---
                     }
                     else
                     {
-                        Segment S = List[i - 1] as Segment;
+                        var S = List[i - 1] as Segment;
 
-                        X_coord += S.vector.x * List[i].mass;
-                        Y_coord += S.vector.y * List[i].mass;
+                        coordX += S.Vector.X * List[i].Mass;
+                        CoordY += S.Vector.Y * List[i].Mass;
                     }
                 }
                 else
@@ -44,29 +41,31 @@ namespace Chain
 
                     if (i == 1)
                     {
-                        X_coord += (S.vector.x + Default_x) / 2 * List[i].mass;//---
-                        Y_coord += (S.vector.y + Default_y) / 2 * List[i].mass;//---
+                        coordX += (S.Vector.X + defaultX) / 2 * List[i].Mass; //---
+                        CoordY += (S.Vector.Y + defaultY) / 2 * List[i].Mass; //---
                     }
                     else
                     {
                         Segment S0 = List[i - 2] as Segment;
 
-                        X_coord += (S.vector.x + S0.vector.x) / 2 * List[i].mass;
-                        Y_coord += (S.vector.y + S0.vector.y) / 2 * List[i].mass;
+                        coordX += (S.Vector.X + S0.Vector.X) / 2 * List[i].Mass;
+                        CoordY += (S.Vector.Y + S0.Vector.Y) / 2 * List[i].Mass;
                     }
                 }
             }
 
-            
-            X_coord = X_coord / Mass;
-            Y_coord = Y_coord / Mass;
 
-            Point all_mass_center;
+            coordX = coordX / Mass;
+            CoordY = CoordY / Mass;
 
-            all_mass_center.x = X_coord;
-            all_mass_center.y = Y_coord;
+            var allMassCenter = new Point
+            {
+                X = coordX,
+                Y = CoordY
+            };
 
-            return all_mass_center;
+
+            return allMassCenter;
         }
     }
 }
