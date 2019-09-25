@@ -2,46 +2,45 @@
 
 namespace Chain
 {
-    public class Object
+    public abstract class Object
     {
-        public bool IsMassCenterVisible;
-        public double Mass;
+        public bool IsMassCenterVisible { get; set; }
+        public double Mass { get; set; }
 
-        public Object()
+        protected Object()
         {
             IsMassCenterVisible = false;
-            Mass = 0;
+            Mass = 10;
         }
     }
 
     public class Segment : Object
     {
-        //public int length;
+        public double Length { get; set; }
 
         public Point Vector; //пересчёт из длины и угла предыдущего сустава
 
-
-        public bool Visibility;
-        public bool Efemerik;
+        public bool Visibility { get; set; }
+        public bool Efemerik { get; set; }
 
         public Segment()
         {
-            //length=2;
             Vector.X = 0;
             Vector.Y = 2;
+            Length = 1;
 
             Visibility = true;
             Efemerik = false;
         }
     }
 
-    internal class Joint : Object
+    public class Joint : Object
     {
-        public double CurrentAngle;
+        public double CurrentAngle { get; set; }
 
-        public bool IsAngleRestricted;
-        public double AngleRestrictionLeft;
-        public double AngleRestrictionRight;
+        public bool IsAngleRestricted { get; set; }
+        public double AngleRestrictionLeft { get; set; }
+        public double AngleRestrictionRight { get; set; }
 
         public Joint()
         {

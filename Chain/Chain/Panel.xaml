@@ -1,0 +1,178 @@
+﻿<UserControl x:Class="Chain.Panel"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 x:Name="UserControl"
+			 d:DataContext="{d:DesignInstance local:Panel}"
+			 xmlns:local="clr-namespace:Chain"
+			 mc:Ignorable="d">
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+		<local:NullToBoolConverter x:Key="NullToBoolConverter" />
+		<local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<Border Background="Aquamarine"
+				Grid.Column="0"
+				HorizontalAlignment="Right"
+				Visibility="{Binding Path=IsPanelVisible, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
+				CornerRadius="2,0,0,2"
+				BorderThickness="1,1,0,1"
+				BorderBrush="DarkGray"
+				Width="250">
+			<StackPanel HorizontalAlignment="Stretch"
+						Margin="10,10,0,10">
+				<TextBlock FontSize="14"
+						   Foreground="Black"
+						   TextAlignment="Center"
+						   Text="Настройка параметров объекта" />
+				<CheckBox Content="Отображать центр масс"
+						  IsChecked="{Binding SelectedObject.IsMassCenterVisible, ElementName=UserControl, Mode=TwoWay}" />
+				<StackPanel>
+					<TextBlock FontSize="12"
+							   Foreground="Black"
+							   Text="Масса" />
+					<Slider Value="{Binding SelectedObject.Mass, ElementName=UserControl, Mode=TwoWay}"
+							Minimum="-10"
+							Maximum="10" />
+				</StackPanel>
+				<Grid
+					Visibility="{Binding SelectedSegment, ElementName=UserControl, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
+					<Grid Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<CheckBox Content="Видимость"
+								  Grid.Column="0"
+								  IsChecked="{Binding SelectedSegment.Visibility, ElementName=UserControl, Mode=TwoWay}" />
+						<CheckBox Content="Эфемерность"
+								  Grid.Column="1"
+								  IsChecked="{Binding SelectedSegment.Efemerik, ElementName=UserControl, Mode=TwoWay}" />
+					</Grid>
+                    <StackPanel Grid.Row="1">
+						<TextBlock FontSize="12"
+								   Foreground="Black"
+								   Text="Длина сегмента" />
+                        <Slider Value="{Binding SelectedSegment.Length, ElementName=UserControl, Mode=TwoWay}"
+								Minimum="0"
+								Maximum="10" />
+					</StackPanel>
+				</Grid>
+                <StackPanel Visibility="{Binding SelectedJoint, ElementName=UserControl, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+					<TextBlock FontSize="12"
+							   Foreground="Black"
+							   Text="Минимальный угол" />
+					<Slider Value="{Binding SelectedJoint.AngleRestrictionLeft, ElementName=UserControl, Mode=TwoWay}"
+							Minimum="0"
+							Maximum="360" />
+					<TextBlock FontSize="12"
+							   Foreground="Black"
+							   Text="Максимальный угол" />
+					<Slider Value="{Binding SelectedJoint.AngleRestrictionRight, ElementName=UserControl, Mode=TwoWay}"
+							Minimum="0"
+							Maximum="360" />
+					<TextBlock FontSize="12"
+							   Foreground="Black"
+							   Text="Текущий угол" />
+					<Slider Value="{Binding SelectedJoint.CurrentAngle, ElementName=UserControl, Mode=TwoWay}"
+							Minimum="0"
+							Maximum="360" />
+					<CheckBox Content="Ограничение угла"
+							  IsChecked="{Binding SelectedJoint.IsAngleRestricted, ElementName=UserControl, Mode=TwoWay}" />
+                </StackPanel>
+            </StackPanel>
+		</Border>
+		<!--Кнопка скрытия-раскрытия панели-->
+		<Button Width="20"
+				Grid.Column="1"
+				HorizontalAlignment="Right"
+				Click="ShowHideMenu"
+				IsEnabled="{Binding SelectedObject, ElementName=UserControl, Converter={StaticResource NullToBoolConverter}}"
+				x:Name="ShowHideButton"
+				ToolTipService.ShowOnDisabled="True"
+				Padding="0"
+				Cursor="{x:Static Cursors.Hand}"
+				VerticalAlignment="Stretch">
+			<Button.Template>
+				<ControlTemplate>
+					<Border BorderBrush="DarkGray">
+						<Border.Style>
+							<Style TargetType="Border">
+								<Setter Property="CornerRadius"
+										Value="2" />
+								<Setter Property="BorderThickness"
+										Value="1" />
+								<Setter Property="Background"
+										Value="Aquamarine" />
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding Path=IsPanelVisible, ElementName=UserControl}"
+												 Value="True">
+										<Setter Property="CornerRadius"
+												Value="0,2,2,0" />
+										<Setter Property="BorderThickness"
+												Value="0,1,1,1" />
+									</DataTrigger>
+									<Trigger Property="IsMouseOver"
+											 Value="True">
+										<Setter Property="Background"
+												Value="#7F7FFFD4" />
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</Border.Style>
+						<TextBlock Text="{TemplateBinding Button.Content}"
+								   VerticalAlignment="Center"
+								   Opacity="1"
+								   HorizontalAlignment="Center">
+							<TextBlock.Style>
+								<Style TargetType="TextBlock">
+									<Setter Property="Foreground"
+											Value="Black" />
+									<Style.Triggers>
+										<Trigger Property="Button.IsEnabled"
+												 Value="False">
+											<Setter Property="Foreground"
+													Value="DarkGray" />
+										</Trigger>
+									</Style.Triggers>
+								</Style>
+							</TextBlock.Style>
+						</TextBlock>
+					</Border>
+				</ControlTemplate>
+			</Button.Template>
+			<Button.Style>
+				<Style TargetType="Button">
+					<Setter Property="Content"
+							Value="&lt;" />
+					<Setter Property="ToolTip"
+							Value="Раскрыть" />
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding Path=IsPanelVisible, ElementName=UserControl}"
+									 Value="True">
+							<Setter Property="Content"
+									Value="&gt;" />
+							<Setter Property="ToolTip"
+									Value="Скрыть" />
+						</DataTrigger>
+						<Trigger Property="IsEnabled"
+								 Value="False">
+							<Setter Property="ToolTip"
+									Value="Не выбран элемент" />
+						</Trigger>
+					</Style.Triggers>
+				</Style>
+			</Button.Style>
+		</Button>
+	</Grid>
+</UserControl>
