@@ -4,130 +4,89 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:Chain"
+		d:DataContext="{d:DesignInstance local:MainWindow}"
 		mc:Ignorable="d"
 		Title="Manipulator"
-		x:Name="Window"
-		MinWidth="400"
-		MinHeight="100"
+		MinWidth="650"
+		MinHeight="300"
 		Height="450"
 		Width="800">
-	<Window.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-	</Window.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-		<Border Margin="20"
-				Grid.Column="0"
-				BorderThickness="1"
-				BorderBrush="Gray"
-				CornerRadius="2"
-				HorizontalAlignment="Stretch"
-				Background="Transparent">
-			<Canvas VerticalAlignment="Stretch"
+		<!--Поле построения-->
+		<Grid Margin="20"
+			  Grid.Column="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Border BorderThickness="1"
+					Grid.Row="0"
+					BorderBrush="Gray"
+					CornerRadius="2"
 					HorizontalAlignment="Stretch"
-					SizeChanged="CenterCircleSetPosition"
-					Loaded="CenterCircleSetPosition"
-					Name="Canvas">
-				<Ellipse Stretch="Fill"
-						 Name="CenterCircle"
-						 Width="10"
-						 Height="10"
-						 MouseDown="OnCenterClicked"
-						 Stroke="DarkGray"
-						 StrokeThickness="1"
-						 Cursor="{x:Static Cursors.Hand}"
-						 Fill="Green">
-					<Ellipse.Style>
-						<Style TargetType="Ellipse">
-							<Style.Triggers>
-								<Trigger Property="IsMouseOver"
-										 Value="True">
-									<Setter Property="Opacity"
-											Value=".75" />
-								</Trigger>
-							</Style.Triggers>
-						</Style>
-					</Ellipse.Style>
-				</Ellipse>
-			</Canvas>
-		</Border>
-		<!--Панель настройки-->
-		<Grid Grid.Column="1"
-			  Margin="2">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
-			<Border Background="Aquamarine"
-					Grid.Column="0"
-					HorizontalAlignment="Right"
-					Visibility="{Binding Path=IsPanelVisible, ElementName=Window, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
-					CornerRadius="2,0,0,2"
-					BorderThickness="1,1,0,1"
-					BorderBrush="DarkGray"
-					Width="250">
-				<StackPanel HorizontalAlignment="Stretch"
-							Margin="20,20,0,20">
-					<TextBlock FontSize="12"
-							   Foreground="Black"
-							   TextAlignment="Center"
-							   Text="Настройка параметров объекта" />
-				</StackPanel>
+					Background="Transparent">
+				<Canvas VerticalAlignment="Stretch"
+						HorizontalAlignment="Stretch"
+						SizeChanged="CenterCircleSetPosition"
+						Loaded="CenterCircleSetPosition"
+						Name="Canvas">
+					<Ellipse Stretch="Fill"
+							 Name="CenterCircle"
+							 Width="10"
+							 Height="10"
+							 MouseDown="OnCenterClicked"
+							 Stroke="DarkGray"
+							 StrokeThickness="1"
+							 Cursor="{x:Static Cursors.Hand}"
+							 Fill="Green">
+						<Ellipse.Style>
+							<Style TargetType="Ellipse">
+								<Style.Triggers>
+									<Trigger Property="IsMouseOver"
+											 Value="True">
+										<Setter Property="Opacity"
+												Value=".75" />
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</Ellipse.Style>
+					</Ellipse>
+				</Canvas>
 			</Border>
-			<!--Кнопка скрытия-раскрытия панели-->
-			<Button Width="20"
-					Grid.Column="1"
-					HorizontalAlignment="Right"
-					Click="ShowHideMenu"
-					Padding="0"
-					Content=">"
-					Cursor="{x:Static Cursors.Hand}"
-					VerticalAlignment="Stretch">
-				<Button.Template>
-					<ControlTemplate>
-						<Border BorderBrush="DarkGray">
-							<Border.Style>
-								<Style TargetType="Border">
-									<Setter Property="CornerRadius"
-											Value="2" />
-									<Setter Property="BorderThickness"
-											Value="1" />
-									<Style.Triggers>
-										<DataTrigger Binding="{Binding Path=IsPanelVisible, ElementName=Window}"
-													 Value="True">
-											<Setter Property="CornerRadius"
-													Value="0,2,2,0" />
-											<Setter Property="BorderThickness"
-													Value="0,1,1,1" />
-										</DataTrigger>
-									</Style.Triggers>
-								</Style>
-							</Border.Style>
-							<Grid>
-								<Border Background="Aquamarine">
-									<Border.Style>
-										<Style TargetType="Border">
-											<Style.Triggers>
-												<Trigger Property="IsMouseOver"
-														 Value="True">
-													<Setter Property="Opacity"
-															Value=".5" />
-												</Trigger>
-											</Style.Triggers>
-										</Style>
-									</Border.Style>
-								</Border>
-								<TextBlock Text="{TemplateBinding Button.Content}"
-										   VerticalAlignment="Center"
-										   HorizontalAlignment="Center" />
-							</Grid>
-						</Border>
-					</ControlTemplate>
-				</Button.Template>
-			</Button>
+			<Border Background="Cornsilk"
+					Grid.Row="1"
+					Margin="0,8,0,0"
+					HorizontalAlignment="Stretch"
+					CornerRadius="2"
+					BorderThickness="1"
+					BorderBrush="DarkGray"
+					Height="36">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Button Grid.Column="0"
+							Margin="5"
+							Content="Загрузить"></Button>
+					<Button Grid.Column="1"
+							Margin="5"
+							Content="Сохранить"></Button>
+					<CheckBox Content="Отображать центры масс"
+							  VerticalAlignment="Center"
+							  Margin="5"
+							  Grid.Column="2" />
+				</Grid>
+			</Border>
 		</Grid>
+		<!--Боковая Панель настройки-->
+		<local:Panel Grid.Column="1"
+					 x:Name="Panel"
+					 Margin="2" />
 	</Grid>
 </Window>
