@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddDelete.cs" />
     <Compile Include="NullToBoolConverter.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
     <Compile Include="Panel.xaml.cs">

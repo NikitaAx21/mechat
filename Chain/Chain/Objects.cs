@@ -4,6 +4,7 @@ namespace Chain
 {
     public abstract class Object
     {
+        public int Id;
         public bool IsMassCenterVisible { get; set; }
         public double Mass { get; set; }
 
@@ -11,6 +12,7 @@ namespace Chain
         {
             IsMassCenterVisible = false;
             Mass = 10;
+            Id = 0;
         }
     }
 
