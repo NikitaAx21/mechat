@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,7 +20,7 @@ namespace Chain
 
         public bool IsPanelVisible
         {
-            get { return _isPanelVisible; }
+            get => _isPanelVisible;
             set
             {
                 _isPanelVisible = value;
@@ -35,10 +34,14 @@ namespace Chain
 
         public Object SelectedObject
         {
-            get { return _selectedObject; }
+            get => _selectedObject;
             set
             {
+                if (_selectedObject != null)
+                    _selectedObject.IsSelected = false;
                 _selectedObject = value;
+                if (_selectedObject != null)
+                    _selectedObject.IsSelected = true;
                 IsPanelVisible = value != null;
                 NotifyPropertyChanged(() => SelectedObject);
                 NotifyPropertyChanged(() => SelectedSegment);
@@ -51,10 +54,7 @@ namespace Chain
             if (SelectedObject == null)
                 return;
 
-            else
-            {
-                IsPanelVisible = !IsPanelVisible;
-            }
+            IsPanelVisible = !IsPanelVisible;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

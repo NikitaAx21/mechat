@@ -4,13 +4,16 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:Chain"
-		d:DataContext="{d:DesignInstance local:MainWindow}"
+		DataContext="{Binding RelativeSource={RelativeSource Self}}"
 		mc:Ignorable="d"
 		Title="Manipulator"
 		MinWidth="650"
 		MinHeight="300"
 		Height="450"
 		Width="800">
+	<Window.Resources>
+		<local:NullToBoolConverter x:Key="NullToBoolConverter" />
+	</Window.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
@@ -33,29 +36,7 @@
 						HorizontalAlignment="Stretch"
 						SizeChanged="CenterCircleSetPosition"
 						Loaded="CenterCircleSetPosition"
-						Name="Canvas">
-					<Ellipse Stretch="Fill"
-							 Name="CenterCircle"
-							 Width="10"
-							 Height="10"
-							 MouseDown="OnCenterClicked"
-							 Stroke="DarkGray"
-							 StrokeThickness="1"
-							 Cursor="{x:Static Cursors.Hand}"
-							 Fill="Green">
-						<Ellipse.Style>
-							<Style TargetType="Ellipse">
-								<Style.Triggers>
-									<Trigger Property="IsMouseOver"
-											 Value="True">
-										<Setter Property="Opacity"
-												Value=".75" />
-									</Trigger>
-								</Style.Triggers>
-							</Style>
-						</Ellipse.Style>
-					</Ellipse>
-				</Canvas>
+						Name="Canvas" />
 			</Border>
 			<Border Background="Cornsilk"
 					Grid.Row="1"
@@ -67,20 +48,35 @@
 					Height="36">
 				<Grid>
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 					<Button Grid.Column="0"
 							Margin="5"
-							Content="Загрузить"></Button>
+							Content="Загрузить" />
 					<Button Grid.Column="1"
 							Margin="5"
-							Content="Сохранить"></Button>
+							Content="Сохранить" />
 					<CheckBox Content="Отображать центры масс"
 							  VerticalAlignment="Center"
 							  Margin="5"
 							  Grid.Column="2" />
+					<StackPanel Grid.Column="3"
+								Margin="5,0"
+								VerticalAlignment="Stretch"
+								HorizontalAlignment="Stretch">
+						<Button Content="+"
+								VerticalAlignment="Stretch"
+								Padding="0"
+								Click="AddObject" />
+						<Button Content="-"
+								VerticalAlignment="Stretch"
+								IsEnabled="{Binding SelectedObject, ElementName=Panel, Converter={StaticResource NullToBoolConverter}}"
+								Padding="0"
+								Click="DeleteObject" />
+					</StackPanel>
 				</Grid>
 			</Border>
 		</Grid>

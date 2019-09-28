@@ -55,13 +55,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AddDelete.cs" />
+    <Compile Include="ListManager.cs" />
     <Compile Include="NullToBoolConverter.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
     <Compile Include="Panel.xaml.cs">
       <DependentUpon>Panel.xaml</DependentUpon>
     </Compile>
     <Compile Include="SaveLoad.cs" />
+    <Compile Include="VisualSegment.xaml.cs">
+      <DependentUpon>VisualSegment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VisualJoint.xaml.cs">
+      <DependentUpon>VisualJoint.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -76,6 +82,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Panel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SelectingStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VisualSegment.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="VisualJoint.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

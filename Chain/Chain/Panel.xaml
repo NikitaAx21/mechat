@@ -3,8 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 x:Name="UserControl"
-			 d:DataContext="{d:DesignInstance local:Panel}"
+			 DataContext="{Binding RelativeSource={RelativeSource Self}}"
 			 xmlns:local="clr-namespace:Chain"
 			 mc:Ignorable="d">
 	<UserControl.Resources>
@@ -20,7 +19,7 @@
 		<Border Background="Aquamarine"
 				Grid.Column="0"
 				HorizontalAlignment="Right"
-				Visibility="{Binding Path=IsPanelVisible, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
+				Visibility="{Binding Path=IsPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
 				CornerRadius="2,0,0,2"
 				BorderThickness="1,1,0,1"
 				BorderBrush="DarkGray"
@@ -32,17 +31,17 @@
 						   TextAlignment="Center"
 						   Text="Настройка параметров объекта" />
 				<CheckBox Content="Отображать центр масс"
-						  IsChecked="{Binding SelectedObject.IsMassCenterVisible, ElementName=UserControl, Mode=TwoWay}" />
+						  IsChecked="{Binding SelectedObject.IsMassCenterVisible, Mode=TwoWay}" />
 				<StackPanel>
 					<TextBlock FontSize="12"
 							   Foreground="Black"
 							   Text="Масса" />
-					<Slider Value="{Binding SelectedObject.Mass, ElementName=UserControl, Mode=TwoWay}"
+					<Slider Value="{Binding SelectedObject.Mass, Mode=TwoWay}"
 							Minimum="-10"
 							Maximum="10" />
 				</StackPanel>
 				<Grid
-					Visibility="{Binding SelectedSegment, ElementName=UserControl, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+					  Visibility="{Binding SelectedSegment, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
 					<Grid.RowDefinitions>
 						<RowDefinition />
 						<RowDefinition />
@@ -54,50 +53,51 @@
 						</Grid.ColumnDefinitions>
 						<CheckBox Content="Видимость"
 								  Grid.Column="0"
-								  IsChecked="{Binding SelectedSegment.Visibility, ElementName=UserControl, Mode=TwoWay}" />
+								  IsChecked="{Binding SelectedSegment.Visibility, Mode=TwoWay}" />
 						<CheckBox Content="Эфемерность"
 								  Grid.Column="1"
-								  IsChecked="{Binding SelectedSegment.Efemerik, ElementName=UserControl, Mode=TwoWay}" />
+								  IsChecked="{Binding SelectedSegment.Efemerik, Mode=TwoWay}" />
 					</Grid>
-                    <StackPanel Grid.Row="1">
+					<StackPanel Grid.Row="1">
 						<TextBlock FontSize="12"
 								   Foreground="Black"
 								   Text="Длина сегмента" />
-                        <Slider Value="{Binding SelectedSegment.Length, ElementName=UserControl, Mode=TwoWay}"
+						<Slider Value="{Binding SelectedSegment.Length, Mode=TwoWay}"
 								Minimum="0"
-								Maximum="10" />
+								Maximum="200" />
 					</StackPanel>
 				</Grid>
-                <StackPanel Visibility="{Binding SelectedJoint, ElementName=UserControl, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+				<StackPanel
+							Visibility="{Binding  SelectedJoint, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
 					<TextBlock FontSize="12"
 							   Foreground="Black"
 							   Text="Минимальный угол" />
-					<Slider Value="{Binding SelectedJoint.AngleRestrictionLeft, ElementName=UserControl, Mode=TwoWay}"
+					<Slider Value="{Binding SelectedJoint.AngleRestrictionLeft, Mode=TwoWay}"
 							Minimum="0"
 							Maximum="360" />
 					<TextBlock FontSize="12"
 							   Foreground="Black"
 							   Text="Максимальный угол" />
-					<Slider Value="{Binding SelectedJoint.AngleRestrictionRight, ElementName=UserControl, Mode=TwoWay}"
+					<Slider Value="{Binding SelectedJoint.AngleRestrictionRight, Mode=TwoWay}"
 							Minimum="0"
 							Maximum="360" />
 					<TextBlock FontSize="12"
 							   Foreground="Black"
 							   Text="Текущий угол" />
-					<Slider Value="{Binding SelectedJoint.CurrentAngle, ElementName=UserControl, Mode=TwoWay}"
+					<Slider Value="{Binding SelectedJoint.CurrentAngle, Mode=TwoWay}"
 							Minimum="0"
 							Maximum="360" />
 					<CheckBox Content="Ограничение угла"
-							  IsChecked="{Binding SelectedJoint.IsAngleRestricted, ElementName=UserControl, Mode=TwoWay}" />
-                </StackPanel>
-            </StackPanel>
+							  IsChecked="{Binding SelectedJoint.IsAngleRestricted, Mode=TwoWay}" />
+				</StackPanel>
+			</StackPanel>
 		</Border>
 		<!--Кнопка скрытия-раскрытия панели-->
 		<Button Width="20"
 				Grid.Column="1"
 				HorizontalAlignment="Right"
 				Click="ShowHideMenu"
-				IsEnabled="{Binding SelectedObject, ElementName=UserControl, Converter={StaticResource NullToBoolConverter}}"
+				IsEnabled="{Binding SelectedObject, Converter={StaticResource NullToBoolConverter}}"
 				x:Name="ShowHideButton"
 				ToolTipService.ShowOnDisabled="True"
 				Padding="0"
@@ -115,7 +115,7 @@
 								<Setter Property="Background"
 										Value="Aquamarine" />
 								<Style.Triggers>
-									<DataTrigger Binding="{Binding Path=IsPanelVisible, ElementName=UserControl}"
+									<DataTrigger Binding="{Binding Path=IsPanelVisible}"
 												 Value="True">
 										<Setter Property="CornerRadius"
 												Value="0,2,2,0" />
@@ -158,7 +158,7 @@
 					<Setter Property="ToolTip"
 							Value="Раскрыть" />
 					<Style.Triggers>
-						<DataTrigger Binding="{Binding Path=IsPanelVisible, ElementName=UserControl}"
+						<DataTrigger Binding="{Binding Path=IsPanelVisible}"
 									 Value="True">
 							<Setter Property="Content"
 									Value="&gt;" />
