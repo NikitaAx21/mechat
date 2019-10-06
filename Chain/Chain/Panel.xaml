@@ -69,6 +69,10 @@
 				</Grid>
 				<StackPanel
 					Visibility="{Binding  SelectedJoint, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+					<TextBlock FontSize="12"
+							   Foreground="Black"
+							   HorizontalAlignment="Center"
+							   Text="Угол" />
 					<local:AngleSlider
 						IsAngleRestricted="{Binding SelectedJoint.IsAngleRestricted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						LowRestriction="{Binding SelectedJoint.AngleRestrictionLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
