@@ -41,7 +41,7 @@
 							Maximum="10" />
 				</StackPanel>
 				<Grid
-					  Visibility="{Binding SelectedSegment, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+					Visibility="{Binding SelectedSegment, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
 					<Grid.RowDefinitions>
 						<RowDefinition />
 						<RowDefinition />
@@ -68,27 +68,14 @@
 					</StackPanel>
 				</Grid>
 				<StackPanel
-							Visibility="{Binding  SelectedJoint, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
-					<TextBlock FontSize="12"
-							   Foreground="Black"
-							   Text="Минимальный угол" />
-					<Slider Value="{Binding SelectedJoint.AngleRestrictionLeft, Mode=TwoWay}"
-							Minimum="0"
-							Maximum="360" />
-					<TextBlock FontSize="12"
-							   Foreground="Black"
-							   Text="Максимальный угол" />
-					<Slider Value="{Binding SelectedJoint.AngleRestrictionRight, Mode=TwoWay}"
-							Minimum="0"
-							Maximum="360" />
-					<TextBlock FontSize="12"
-							   Foreground="Black"
-							   Text="Текущий угол" />
-					<Slider Value="{Binding SelectedJoint.CurrentAngle, Mode=TwoWay}"
-							Minimum="0"
-							Maximum="360" />
+					Visibility="{Binding  SelectedJoint, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+					<local:AngleSlider
+						IsAngleRestricted="{Binding SelectedJoint.IsAngleRestricted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						LowRestriction="{Binding SelectedJoint.AngleRestrictionLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						UpRestriction="{Binding SelectedJoint.AngleRestrictionRight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						Value="{Binding SelectedJoint.CurrentAngle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Content="Ограничение угла"
-							  IsChecked="{Binding SelectedJoint.IsAngleRestricted, Mode=TwoWay}" />
+							  IsChecked="{Binding SelectedJoint.IsAngleRestricted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</StackPanel>
 			</StackPanel>
 		</Border>

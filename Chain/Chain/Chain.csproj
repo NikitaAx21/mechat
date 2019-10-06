@@ -55,6 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AngleSlider.xaml.cs">
+      <DependentUpon>AngleSlider.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ListManager.cs" />
     <Compile Include="NullToBoolConverter.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
@@ -68,6 +71,10 @@
     <Compile Include="VisualJoint.xaml.cs">
       <DependentUpon>VisualJoint.xaml</DependentUpon>
     </Compile>
+    <Page Include="AngleSlider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

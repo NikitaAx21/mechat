@@ -145,6 +145,11 @@ namespace Chain
             set
             {
                 _isAngleRestricted = value;
+                if (!_isAngleRestricted)
+                {
+                    AngleRestrictionLeft = -180d;
+                    AngleRestrictionRight = 180d;
+                }
                 NotifyPropertyChanged(() => IsAngleRestricted);
             }
         }
@@ -165,7 +170,7 @@ namespace Chain
             set
             {
                 _angleRestrictionRight = value;
-                NotifyPropertyChanged(() => _angleRestrictionRight);
+                NotifyPropertyChanged(() => AngleRestrictionRight);
             }
         }
 
@@ -184,8 +189,8 @@ namespace Chain
 
             IsAngleRestricted = false;
 
-            AngleRestrictionLeft = 10;
-            AngleRestrictionRight = 10;
+            AngleRestrictionLeft = -180;
+            AngleRestrictionRight = 180;
         }
     }
 }
