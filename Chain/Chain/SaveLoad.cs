@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 using System.Xml;
 using System.Xml.Linq;
+
+using System.Reflection;//
+
 namespace Chain
 {
     class SaveLoad
     {
 
 
-        List<Object> Objects;//-------------------------------------------------------------------------------------
+        //List<Object> ChainList;//-------------------------------------------------------------------------------------
         string path = "";
 
-        public void Save()
+        public void Load(List<Object> ChainList)//из файла
         {
             /*OpenFileDialog fileChoose = new OpenFileDialog();
             if (fileChoose.ShowDialog() == true)
@@ -30,7 +33,7 @@ namespace Chain
 
             if (path != "")
             {
-                Objects = new List<Object>();
+                //Objects = new List<Object>();
 
 
                 XmlDocument dataXml = new XmlDocument();
@@ -41,49 +44,80 @@ namespace Chain
 
                 int i = 0;
 
-                while (i<xNode.ChildNodes.Count)
+                while (i < xNode.ChildNodes.Count)
                 {
                     if (xNode.ChildNodes[i].Name == "Joint")
                     {
                         Joint J = new Joint();
 
-                        //piket2 = xNode.ChildNodes[i].ChildNodes.Count;
+                        Type myClassType = J.GetType();
+                        PropertyInfo[] properties = myClassType.GetProperties();
 
-                        J.IsMassCenterVisible = bool.Parse(xNode.ChildNodes[i].Attributes[0].Value);
+                        int j = 0;
+                        foreach (PropertyInfo property in properties)
+                        {
+                            //if (property.Name == "") { } else { }
+                            if (property.Name == xNode.ChildNodes[i].Attributes[j].Name)//=============================================================exeption?
+                            {
 
-                        J.Mass = double.Parse(xNode.ChildNodes[i].Attributes[1].Value);
+                                string type = property.PropertyType.Name;
+                                switch (type)
+                                {
+                                    case "Double":
+                                        var attr1 = double.Parse(xNode.ChildNodes[i].Attributes[j].Value);
+                                        property.SetValue(J, attr1);
+                                        break;
+                                    case "Boolean":
+                                        var attr2 = bool.Parse(xNode.ChildNodes[i].Attributes[j].Value);
+                                        property.SetValue(J, attr2);
+                                        break;
+                                    case "ssdsdsd"://=================================================================
+                                        var attr3 = double.Parse(xNode.ChildNodes[i].Attributes[j].Value);
+                                        property.SetValue(J, attr3);
+                                        break;
+                                }
+                            }
+                            j++;
+                        }
 
-                        J.CurrentAngle = double.Parse(xNode.ChildNodes[i].Attributes[2].Value);
-
-                        J.IsAngleRestricted = bool.Parse(xNode.ChildNodes[i].Attributes[3].Value);
-
-                        J.AngleRestrictionLeft = double.Parse(xNode.ChildNodes[i].Attributes[4].Value);
-
-                        J.AngleRestrictionRight = double.Parse(xNode.ChildNodes[i].Attributes[5].Value);
-
-                        Objects.Add(J);
+                        ChainList.Add(J);
 
                     }
                     if (xNode.ChildNodes[i].Name == "Segment")
                     {
                         Segment S = new Segment();
 
-                        //piket2 = xNode.ChildNodes[i].ChildNodes.Count;
+                        Type myClassType = S.GetType();
+                        PropertyInfo[] properties = myClassType.GetProperties();
 
-                        S.IsMassCenterVisible = bool.Parse(xNode.ChildNodes[i].Attributes[0].Value);
+                        int j = 0;
+                        foreach (PropertyInfo property in properties)
+                        {
+                            //if (property.Name == "") { } else { }
+                            if (property.Name == xNode.ChildNodes[i].Attributes[j].Name)//=============================================================exeption?
+                            {
 
-                        S.Mass = double.Parse(xNode.ChildNodes[i].Attributes[1].Value);
+                                string type = property.PropertyType.Name;
+                                switch (type)
+                                {
+                                    case "Double":
+                                        var attr1 = double.Parse(xNode.ChildNodes[i].Attributes[j].Value);
+                                        property.SetValue(S, attr1);
+                                        break;
+                                    case "Boolean":
+                                        var attr2 = bool.Parse(xNode.ChildNodes[i].Attributes[j].Value);
+                                        property.SetValue(S, attr2);
+                                        break;
+                                    case "ssdsdsd"://=================================================================
+                                        var attr3 = double.Parse(xNode.ChildNodes[i].Attributes[j].Value);
+                                        property.SetValue(S, attr3);
+                                        break;
+                                }
+                            }
+                            j++;
+                        }
 
-                        S.Vector.X = double.Parse(xNode.ChildNodes[i].Attributes[2].Value);
-
-                        S.Vector.Y = double.Parse(xNode.ChildNodes[i].Attributes[3].Value);
-
-                        S.Visibility = bool.Parse(xNode.ChildNodes[i].Attributes[4].Value);
-
-                        S.Efemerik = bool.Parse(xNode.ChildNodes[i].Attributes[5].Value);
-
-                        Objects.Add(S);
-
+                        ChainList.Add(S);
                     }
                     i++;
                 }
@@ -91,69 +125,54 @@ namespace Chain
         }
 
 
-        public void Load()
+        public void Save(List<Object> ChainList)//в файл
         {
 
-            XDocument xdoc = new XDocument();
+            XDocument xdoc = new XDocument();//создаём документ
 
-            // создаем первый элемент
-            XElement FirstElement = new XElement("Objects");
+            XElement FirstElement = new XElement("Objects");// создаем первый элемент
 
-            for (int i = 0; i < Objects.Count; i++)
+            for (int i = 0; i < ChainList.Count; i++)
             {
-                var J = Objects[i] as Joint;
+                var J = ChainList[i] as Joint;
                 if (J != null)
                 {
 
                     XElement Element = new XElement("Joint");
-                    
-                    // создаем атрибут
-                    XAttribute IsMassCenterVisible = new XAttribute("IsMassCenterVisible", J.IsMassCenterVisible);
-                    XAttribute Mass = new XAttribute("Mass", J.Mass);
-                    XAttribute CurrentAngle = new XAttribute("CurrentAngle", J.CurrentAngle);
-                    XAttribute IsAngleRestricted = new XAttribute("IsAngleRestricted", J.IsAngleRestricted);
-                    XAttribute AngleRestrictionLeft = new XAttribute("AngleRestrictionLeft", J.AngleRestrictionLeft);
-                    XAttribute AngleRestrictionRight = new XAttribute("AngleRestrictionRight", J.AngleRestrictionRight);
 
+                    Type myClassType = J.GetType();
+                    PropertyInfo[] properties = myClassType.GetProperties();
 
-                    // добавляем атрибут и элементы в первый элемент
-                    Element.Add(IsMassCenterVisible);
-                    Element.Add(Mass);
-                    Element.Add(CurrentAngle);
-                    Element.Add(IsAngleRestricted);
-                    Element.Add(AngleRestrictionLeft);
-                    Element.Add(AngleRestrictionRight);
-
+                    foreach (PropertyInfo property in properties)
+                    {
+                        //if (property.Name == "") { } else { }
+                        XAttribute Attrib = new XAttribute(property.Name, property.GetValue(J, null));
+                        Element.Add(Attrib);
+                    }
                     FirstElement.Add(Element);
-
                 }
                 else
                 {
-                    Segment S = Objects[i] as Segment;
+                    Segment S = ChainList[i] as Segment;
 
                     XElement Element = new XElement("Segment");
 
-                    // создаем атрибут
-                    XAttribute IsMassCenterVisible = new XAttribute("IsMassCenterVisible", S.IsMassCenterVisible);
-                    XAttribute Mass = new XAttribute("Mass", S.Mass);
-                    XAttribute X = new XAttribute("X", S.Vector.X);
-                    XAttribute Y = new XAttribute("Y", S.Vector.Y);
-                    XAttribute Visibility = new XAttribute("Visibility", S.Visibility);
-                    XAttribute Efemerik = new XAttribute("Efemerik", S.Efemerik);
+                    Type myClassType = S.GetType();
+                    PropertyInfo[] properties = myClassType.GetProperties();
 
+                    foreach (PropertyInfo property in properties)
+                    {
 
-                    // добавляем атрибут и элементы в первый элемент
-                    Element.Add(IsMassCenterVisible);
-                    Element.Add(Mass);
-                    Element.Add(X);
-                    Element.Add(Y);
-                    Element.Add(Visibility);
-                    Element.Add(Efemerik);
+                        //if (property.Name == "") { } else { }
 
+                        XAttribute Attrib = new XAttribute(property.Name, property.GetValue(S, null));
+                        Element.Add(Attrib);
+                    }
                     FirstElement.Add(Element);
                 }
             }
-            // создаем корневой элемент===============================================================
+
+            // создаем корневой элемент
             XElement SourceData = new XElement("SourceData");
 
             // добавляем в корневой элемент
@@ -164,7 +183,6 @@ namespace Chain
 
             //сохраняем документ
             xdoc.Save("SourceData.xml");
-
         }
     }
 }
