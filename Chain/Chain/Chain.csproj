@@ -59,6 +59,7 @@
       <DependentUpon>AngleSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="ListManager.cs" />
+    <Compile Include="DoubleTrimmingConverter.cs" />
     <Compile Include="NullToBoolConverter.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
     <Compile Include="Panel.xaml.cs">
