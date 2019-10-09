@@ -14,9 +14,6 @@ namespace Chain
 {
     class SaveLoad
     {
-
-
-        //List<Object> ChainList;//-------------------------------------------------------------------------------------
         string path = "";
 
         public void Load(List<Object> ChainList)//из файла
@@ -31,99 +28,101 @@ namespace Chain
             }*/
 
 
-            if (path != "")
+            if (!String.IsNullOrEmpty(path))
             {
-                //Objects = new List<Object>();
-
 
                 XmlDocument dataXml = new XmlDocument();
-                dataXml.Load(path);
+                try
+                {
+                    dataXml.Load(path);
+                }
+                catch { }//=================================================================exeption?
+
 
                 XmlElement xRoot = dataXml.DocumentElement;//SourceData
                 XmlNode xNode = xRoot.FirstChild;//Object
 
-                int i = 0;
-
-                while (i < xNode.ChildNodes.Count)
+                foreach (XmlNode node in xNode.ChildNodes)
                 {
-                    if (xNode.ChildNodes[i].Name == "Joint")
-                    {
-                        Joint J = new Joint();
+                    Object Obj;
 
-                        Type myClassType = J.GetType();
+                    if (node.Name == "Joint")
+                    {
+                            Obj = new Joint();
+                    }
+                    if (node.Name == "Segment")
+                    {
+                        Obj = new Segment();
+                    }
+                    else //=================================================================exeption?
+                    {
+                        Obj = new Segment();//???
+                    }
+                    try
+                    {
+                       
+                        Type myClassType = Obj.GetType();
                         PropertyInfo[] properties = myClassType.GetProperties();
 
-                        int j = 0;
+                        //int j = 0;
                         foreach (PropertyInfo property in properties)
                         {
-                            //if (property.Name == "") { } else { }
-                            if (property.Name == xNode.ChildNodes[i].Attributes[j].Name)//=============================================================exeption?
+                            foreach (XmlNode attribut in node.Attributes)
                             {
-
-                                string type = property.PropertyType.Name;
-                                switch (type)
+                                if (property.Name == attribut.Name)
                                 {
-                                    case "Double":
-                                        var attr1 = double.Parse(xNode.ChildNodes[i].Attributes[j].Value);
-                                        property.SetValue(J, attr1);
-                                        break;
-                                    case "Boolean":
-                                        var attr2 = bool.Parse(xNode.ChildNodes[i].Attributes[j].Value);
-                                        property.SetValue(J, attr2);
-                                        break;
-                                    case "ssdsdsd"://=================================================================
-                                        var attr3 = double.Parse(xNode.ChildNodes[i].Attributes[j].Value);
-                                        property.SetValue(J, attr3);
-                                        break;
+                                    string value_type = property.PropertyType.Name;
+                                    switch (value_type)
+                                    {
+                                        case "Double":
+                                            var attr1 = double.Parse(attribut.Value);
+                                            property.SetValue(Obj, attr1);
+                                            break;
+                                        case "Boolean":
+                                            var attr2 = bool.Parse(attribut.Value);
+                                            property.SetValue(Obj, attr2);
+                                            break;
+                                        default:
+
+                                            break;//???
+                                    }
                                 }
                             }
-                            j++;
-                        }
 
-                        ChainList.Add(J);
-
-                    }
-                    if (xNode.ChildNodes[i].Name == "Segment")
-                    {
-                        Segment S = new Segment();
-
-                        Type myClassType = S.GetType();
-                        PropertyInfo[] properties = myClassType.GetProperties();
-
-                        int j = 0;
-                        foreach (PropertyInfo property in properties)
-                        {
-                            //if (property.Name == "") { } else { }
-                            if (property.Name == xNode.ChildNodes[i].Attributes[j].Name)//=============================================================exeption?
+                                /*/if (property.Name == "") { } else { }
+                                if (property.Name == node.Attributes[j].Name)//цикл?
                             {
 
-                                string type = property.PropertyType.Name;
-                                switch (type)
+                                string value_type = property.PropertyType.Name;
+                                switch (value_type)
                                 {
                                     case "Double":
-                                        var attr1 = double.Parse(xNode.ChildNodes[i].Attributes[j].Value);
-                                        property.SetValue(S, attr1);
+                                        var attr1 = double.Parse(node.Attributes[j].Value);
+                                        property.SetValue(Obj, attr1);
                                         break;
                                     case "Boolean":
-                                        var attr2 = bool.Parse(xNode.ChildNodes[i].Attributes[j].Value);
-                                        property.SetValue(S, attr2);
+                                        var attr2 = bool.Parse(node.Attributes[j].Value);
+                                        property.SetValue(Obj, attr2);
                                         break;
-                                    case "ssdsdsd"://=================================================================
-                                        var attr3 = double.Parse(xNode.ChildNodes[i].Attributes[j].Value);
-                                        property.SetValue(S, attr3);
-                                        break;
+                                    default:
+
+                                        break;//???
                                 }
                             }
-                            j++;
-                        }
 
-                        ChainList.Add(S);
+                            j++;*/
+
+                        }
                     }
-                    i++;
+                    catch
+                    { }//=============================================================exeption?
+
+                    ChainList.Add(Obj);
                 }
             }
         }
 
+       
 
         public void Save(List<Object> ChainList)//в файл
         {
@@ -134,42 +133,37 @@ namespace Chain
 
             for (int i = 0; i < ChainList.Count; i++)
             {
-                var J = ChainList[i] as Joint;
-                if (J != null)
+
+                Object Obj;
+
+                Obj = ChainList[i] as Joint;
+                string tag= "Joint";
+                if (Obj == null)
                 {
-
-                    XElement Element = new XElement("Joint");
-
-                    Type myClassType = J.GetType();
-                    PropertyInfo[] properties = myClassType.GetProperties();
-
-                    foreach (PropertyInfo property in properties)
-                    {
-                        //if (property.Name == "") { } else { }
-                        XAttribute Attrib = new XAttribute(property.Name, property.GetValue(J, null));
-                        Element.Add(Attrib);
-                    }
-                    FirstElement.Add(Element);
+                    Obj = ChainList[i] as Segment;
+                    tag = "Segment";
                 }
-                else
-                {
-                    Segment S = ChainList[i] as Segment;
 
-                    XElement Element = new XElement("Segment");
+                    XElement Element = new XElement(tag);
 
-                    Type myClassType = S.GetType();
+                    Type myClassType = Obj.GetType();
                     PropertyInfo[] properties = myClassType.GetProperties();
 
                     foreach (PropertyInfo property in properties)
                     {
 
-                        //if (property.Name == "") { } else { }
+                        if (property.PropertyType.Name== "Boolean" || property.PropertyType.Name == "Double")///???
+                        {
 
-                        XAttribute Attrib = new XAttribute(property.Name, property.GetValue(S, null));
-                        Element.Add(Attrib);
+                            //if (property.Name == "") { } else { } property.PropertyType.Name !=Boolean Double
+                            XAttribute Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
+                            Element.Add(Attrib);
+
+                        }
                     }
+
                     FirstElement.Add(Element);
-                }
+                
             }
 
             // создаем корневой элемент
@@ -180,9 +174,13 @@ namespace Chain
 
             // добавляем корневой элемент в документ
             xdoc.Add(SourceData);
-
-            //сохраняем документ
-            xdoc.Save("SourceData.xml");
+            try
+            {            
+                //сохраняем документ
+                xdoc.Save("SourceData.xml");
+            }
+            catch { }
+            
         }
     }
 }
