@@ -20,10 +20,23 @@ namespace Chain
                 return;
             Panel.SelectedObject = center;
             Canvas.Children.Add(center.Visual);
+
+            SL = new SaveLoad();
         }
 
         public List<Object> ChainList = new List<Object>();
         public ListManager LManager;
+        public SaveLoad SL;
+
+        private void SaveList(object sender, RoutedEventArgs e)
+        {
+            SL.Save(ChainList);
+        }
+
+        private void LoadList(object sender, RoutedEventArgs e)
+        {
+            SL.Load(ChainList);
+        }
 
         private void CenterCircleSetPosition(object sender = null, RoutedEventArgs e = null)
         {

@@ -1,159 +1,154 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Microsoft.Win32;
 using System.Xml;
 using System.Xml.Linq;
+
+using System.Reflection;
+
+using System.Windows;//?????
+
+//Command="{Binding Load2, Mode=OneTime}"
 namespace Chain
 {
-    class SaveLoad
+    public class SaveLoad
     {
-
-
-        List<Object> Objects;//-------------------------------------------------------------------------------------
         string path = "";
 
-        public void Save()
+        public void Load(List<Object> ChainList)//из файла
         {
-            /*OpenFileDialog fileChoose = new OpenFileDialog();
+            OpenFileDialog fileChoose = new OpenFileDialog();
             if (fileChoose.ShowDialog() == true)
             {
                 if (fileChoose.FileName.Split('.')[fileChoose.FileName.Split('.').Length - 1].ToLower() == "xml")
                     path = fileChoose.FileName;
                 else
-                    MessageBox.Show("Выберите файл с расширением \".xml\".");
-            }*/
+                    MessageBox.Show("Выберите файл с расширением \".xml\".");//
+            }
 
-
-            if (path != "")
+            if (!String.IsNullOrEmpty(path))
             {
-                Objects = new List<Object>();
-
-
                 XmlDocument dataXml = new XmlDocument();
-                dataXml.Load(path);
-
-                XmlElement xRoot = dataXml.DocumentElement;//SourceData
-                XmlNode xNode = xRoot.FirstChild;//Object
-
-                int i = 0;
-
-                while (i<xNode.ChildNodes.Count)
+                try
                 {
-                    if (xNode.ChildNodes[i].Name == "Joint")
+                    dataXml.Load(path);
+
+                    XmlElement xRoot = dataXml.DocumentElement;//SourceData
+                    XmlNode xNode = xRoot.FirstChild;//Object
+                    try
+                    { 
+                    foreach (XmlNode node in xNode.ChildNodes)
                     {
-                        Joint J = new Joint();
+                    Object Obj;
 
-                        //piket2 = xNode.ChildNodes[i].ChildNodes.Count;
-
-                        J.IsMassCenterVisible = bool.Parse(xNode.ChildNodes[i].Attributes[0].Value);
-
-                        J.Mass = double.Parse(xNode.ChildNodes[i].Attributes[1].Value);
-
-                        J.CurrentAngle = double.Parse(xNode.ChildNodes[i].Attributes[2].Value);
-
-                        J.IsAngleRestricted = bool.Parse(xNode.ChildNodes[i].Attributes[3].Value);
-
-                        J.AngleRestrictionLeft = double.Parse(xNode.ChildNodes[i].Attributes[4].Value);
-
-                        J.AngleRestrictionRight = double.Parse(xNode.ChildNodes[i].Attributes[5].Value);
-
-                        Objects.Add(J);
-
-                    }
-                    if (xNode.ChildNodes[i].Name == "Segment")
+                    if (node.Name == "Joint")
                     {
-                        Segment S = new Segment();
-
-                        //piket2 = xNode.ChildNodes[i].ChildNodes.Count;
-
-                        S.IsMassCenterVisible = bool.Parse(xNode.ChildNodes[i].Attributes[0].Value);
-
-                        S.Mass = double.Parse(xNode.ChildNodes[i].Attributes[1].Value);
-
-                        S.Vector.X = double.Parse(xNode.ChildNodes[i].Attributes[2].Value);
-
-                        S.Vector.Y = double.Parse(xNode.ChildNodes[i].Attributes[3].Value);
-
-                        S.Visibility = bool.Parse(xNode.ChildNodes[i].Attributes[4].Value);
-
-                        S.Efemerik = bool.Parse(xNode.ChildNodes[i].Attributes[5].Value);
-
-                        Objects.Add(S);
-
+                        Obj = new Joint();
                     }
-                    i++;
+                    if (node.Name == "Segment")
+                    {
+                        Obj = new Segment();
+                    }
+                    else //=================================================================exeption?
+                    {
+                        Obj = new Segment();//???
+                    }
+                    
+
+                        Type myClassType = Obj.GetType();
+                        PropertyInfo[] properties = myClassType.GetProperties();
+
+                        foreach (PropertyInfo property in properties)
+                        {
+                            foreach (XmlNode attribut in node.Attributes)
+                            {
+                                if (property.Name == attribut.Name)
+                                {
+                                    string value_type = property.PropertyType.Name;
+                                    switch (value_type)
+                                    {
+                                        case "Double":
+                                            var attr1 = double.Parse(attribut.Value);
+                                            property.SetValue(Obj, attr1);
+                                            break;
+                                        case "Boolean":
+                                            var attr2 = bool.Parse(attribut.Value);
+                                            property.SetValue(Obj, attr2);
+                                            break;
+                                        default:
+
+                                            break;//???
+                                    }
+                                }
+                            }
+                        }
+                        ChainList.Add(Obj);
+                    }
+                    }
+                    catch
+                    {  
+                        MessageBox.Show("Некорректное содержимое файла.");//
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Не удалось загрузить файл.");//
                 }
             }
         }
 
 
-        public void Load()
+
+        public void Save(List<Object> ChainList)//в файл
         {
 
-            XDocument xdoc = new XDocument();
+            XDocument xdoc = new XDocument();//создаём документ
 
-            // создаем первый элемент
-            XElement FirstElement = new XElement("Objects");
+            XElement FirstElement = new XElement("Objects");// создаем первый элемент
 
-            for (int i = 0; i < Objects.Count; i++)
+            try
             {
-                var J = Objects[i] as Joint;
-                if (J != null)
+
+            
+            for (int i = 0; i < ChainList.Count; i++)
+            {
+
+                Object Obj;
+
+                Obj = ChainList[i] as Joint;
+                string tag = "Joint";
+                if (Obj == null)
+                {
+                    Obj = ChainList[i] as Segment;
+                    tag = "Segment";
+                }
+
+                XElement Element = new XElement(tag);
+
+                Type myClassType = Obj.GetType();
+                PropertyInfo[] properties = myClassType.GetProperties();
+
+                foreach (PropertyInfo property in properties)
                 {
 
-                    XElement Element = new XElement("Joint");
-                    
-                    // создаем атрибут
-                    XAttribute IsMassCenterVisible = new XAttribute("IsMassCenterVisible", J.IsMassCenterVisible);
-                    XAttribute Mass = new XAttribute("Mass", J.Mass);
-                    XAttribute CurrentAngle = new XAttribute("CurrentAngle", J.CurrentAngle);
-                    XAttribute IsAngleRestricted = new XAttribute("IsAngleRestricted", J.IsAngleRestricted);
-                    XAttribute AngleRestrictionLeft = new XAttribute("AngleRestrictionLeft", J.AngleRestrictionLeft);
-                    XAttribute AngleRestrictionRight = new XAttribute("AngleRestrictionRight", J.AngleRestrictionRight);
+                    if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")///???|| property.PropertyType.Name == "Point"
+                    {
 
+                        XAttribute Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
+                        Element.Add(Attrib);
 
-                    // добавляем атрибут и элементы в первый элемент
-                    Element.Add(IsMassCenterVisible);
-                    Element.Add(Mass);
-                    Element.Add(CurrentAngle);
-                    Element.Add(IsAngleRestricted);
-                    Element.Add(AngleRestrictionLeft);
-                    Element.Add(AngleRestrictionRight);
-
-                    FirstElement.Add(Element);
-
+                    }
                 }
-                else
-                {
-                    Segment S = Objects[i] as Segment;
 
-                    XElement Element = new XElement("Segment");
+                FirstElement.Add(Element);
 
-                    // создаем атрибут
-                    XAttribute IsMassCenterVisible = new XAttribute("IsMassCenterVisible", S.IsMassCenterVisible);
-                    XAttribute Mass = new XAttribute("Mass", S.Mass);
-                    XAttribute X = new XAttribute("X", S.Vector.X);
-                    XAttribute Y = new XAttribute("Y", S.Vector.Y);
-                    XAttribute Visibility = new XAttribute("Visibility", S.Visibility);
-                    XAttribute Efemerik = new XAttribute("Efemerik", S.Efemerik);
-
-
-                    // добавляем атрибут и элементы в первый элемент
-                    Element.Add(IsMassCenterVisible);
-                    Element.Add(Mass);
-                    Element.Add(X);
-                    Element.Add(Y);
-                    Element.Add(Visibility);
-                    Element.Add(Efemerik);
-
-                    FirstElement.Add(Element);
-                }
             }
-            // создаем корневой элемент===============================================================
+            }
+            catch
+            {
+                MessageBox.Show("Ошибка исходных данных.");//
+            }
+            // создаем корневой элемент
             XElement SourceData = new XElement("SourceData");
 
             // добавляем в корневой элемент
@@ -161,10 +156,16 @@ namespace Chain
 
             // добавляем корневой элемент в документ
             xdoc.Add(SourceData);
-
-            //сохраняем документ
-            xdoc.Save("SourceData.xml");
-
+            try
+            {
+                //сохраняем документ
+                xdoc.Save("SourceData.xml");
+            }
+            catch
+            {
+                MessageBox.Show("Не удалось сохранить/перезаписать файл.");//
+            }
         }
     }
 }
+
