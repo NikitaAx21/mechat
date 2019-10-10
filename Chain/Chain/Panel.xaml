@@ -9,6 +9,7 @@
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<local:NullToBoolConverter x:Key="NullToBoolConverter" />
+		<local:DoubleTrimmingConverter x:Key="DoubleTrimmingConverter" />
 		<local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
 	</UserControl.Resources>
 	<Grid>
@@ -31,17 +32,25 @@
 						   TextAlignment="Center"
 						   Text="Настройка параметров объекта" />
 				<CheckBox Content="Отображать центр масс"
+						  Margin="0,10"
 						  IsChecked="{Binding SelectedObject.IsMassCenterVisible, Mode=TwoWay}" />
-				<StackPanel>
+				<StackPanel Margin="0,10">
 					<TextBlock FontSize="12"
 							   Foreground="Black"
+							   HorizontalAlignment="Center"
 							   Text="Масса" />
 					<Slider Value="{Binding SelectedObject.Mass, Mode=TwoWay}"
 							Minimum="-10"
+							TickFrequency="2"
+							TickPlacement="BottomRight"
 							Maximum="10" />
+					<TextBlock FontSize="12"
+							   Foreground="Black"
+							   HorizontalAlignment="Center"
+							   Text="{Binding SelectedObject.Mass, Converter={StaticResource DoubleTrimmingConverter}, ConverterParameter=2}" />
 				</StackPanel>
 				<Grid
-					  Visibility="{Binding SelectedSegment, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+					Visibility="{Binding SelectedSegment, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
 					<Grid.RowDefinitions>
 						<RowDefinition />
 						<RowDefinition />
@@ -58,9 +67,11 @@
 								  Grid.Column="1"
 								  IsChecked="{Binding SelectedSegment.Efemerik, Mode=TwoWay}" />
 					</Grid>
-					<StackPanel Grid.Row="1">
+					<StackPanel Grid.Row="1"
+								Margin="0,10">
 						<TextBlock FontSize="12"
 								   Foreground="Black"
+								   HorizontalAlignment="Center"
 								   Text="Длина сегмента" />
 						<Slider Value="{Binding SelectedSegment.Length, Mode=TwoWay}"
 								Minimum="0"
@@ -68,27 +79,18 @@
 					</StackPanel>
 				</Grid>
 				<StackPanel
-							Visibility="{Binding  SelectedJoint, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
+					Visibility="{Binding  SelectedJoint, Converter={StaticResource NullToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}">
 					<TextBlock FontSize="12"
 							   Foreground="Black"
-							   Text="Минимальный угол" />
-					<Slider Value="{Binding SelectedJoint.AngleRestrictionLeft, Mode=TwoWay}"
-							Minimum="0"
-							Maximum="360" />
-					<TextBlock FontSize="12"
-							   Foreground="Black"
-							   Text="Максимальный угол" />
-					<Slider Value="{Binding SelectedJoint.AngleRestrictionRight, Mode=TwoWay}"
-							Minimum="0"
-							Maximum="360" />
-					<TextBlock FontSize="12"
-							   Foreground="Black"
-							   Text="Текущий угол" />
-					<Slider Value="{Binding SelectedJoint.CurrentAngle, Mode=TwoWay}"
-							Minimum="0"
-							Maximum="360" />
+							   HorizontalAlignment="Center"
+							   Text="Угол" />
+					<local:AngleSlider
+						IsAngleRestricted="{Binding SelectedJoint.IsAngleRestricted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						LowRestriction="{Binding SelectedJoint.AngleRestrictionLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						UpRestriction="{Binding SelectedJoint.AngleRestrictionRight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						Value="{Binding SelectedJoint.CurrentAngle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					<CheckBox Content="Ограничение угла"
-							  IsChecked="{Binding SelectedJoint.IsAngleRestricted, Mode=TwoWay}" />
+							  IsChecked="{Binding SelectedJoint.IsAngleRestricted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 				</StackPanel>
 			</StackPanel>
 		</Border>
