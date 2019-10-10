@@ -55,12 +55,10 @@
 					</Grid.ColumnDefinitions>
 					<Button Grid.Column="0"
 							Margin="5"
-							Content="Загрузить"
-                            Click="LoadList"/>
+							Content="Загрузить" />
 					<Button Grid.Column="1"
 							Margin="5"
-							Content="Сохранить"
-                            Click="SaveList"/>
+							Content="Сохранить" />
 					<CheckBox Content="Отображать центры масс"
 							  VerticalAlignment="Center"
 							  Margin="5"
