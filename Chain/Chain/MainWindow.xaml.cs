@@ -69,8 +69,10 @@ namespace Chain
                 }
             }
 
+            Panel.SelectedObject = ChainList.LastOrDefault();
+
             //if (ChainList.Count == 1)//?
-                //CenterCircleSetPosition();
+            //CenterCircleSetPosition();
 
         }
 

@@ -66,7 +66,7 @@ namespace Chain
                     {
                         foreach (XmlNode node in xNode.ChildNodes)
                         {
-                            Object Obj;
+                            Object Obj= new Joint();
 
                             if (node.Name == "Joint")
                             {
@@ -76,9 +76,9 @@ namespace Chain
                             {
                                 Obj = new Segment();
                             }
-                            else //=================================================================exeption?
+                            if ((node.Name != "Segment")&&(node.Name != "Joint")) //=================================================================exeption?
                             {
-                                Obj = new Joint();    //???
+                                throw new Exception("Некорректное содержимое файла");
                             }
 
 
