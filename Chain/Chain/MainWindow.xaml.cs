@@ -21,21 +21,57 @@ namespace Chain
             Panel.SelectedObject = center;
             Canvas.Children.Add(center.Visual);
 
-            SL = new SaveLoad();
+            //SL = new SaveLoad();
         }
 
         public List<Object> ChainList = new List<Object>();
         public ListManager LManager;
-        public SaveLoad SL;
+        //public SaveLoad SL;
 
         private void SaveList(object sender, RoutedEventArgs e)
         {
-            SL.Save(ChainList);
+            LManager.Save(ChainList);
         }
 
-        private void LoadList(object sender, RoutedEventArgs e)
+        private void LoadList(object sender, RoutedEventArgs e)//==??==
         {
-            SL.Load(ChainList);
+            //====================
+            foreach (var o in ChainList)
+            {
+                switch (o)
+                {
+                    case Joint a:
+                        Canvas.Children.Remove(a.Visual);
+                        break;
+                    case Segment b:
+                        Canvas.Children.Remove(b.Visual);
+                        break;
+                }
+            }
+
+            LManager.Delete(0);
+
+            LManager.Load(ChainList);
+
+            //==============================
+           
+            foreach (var o in ChainList)
+            { 
+
+                switch (o)
+                {
+                case Joint joint:
+                    Canvas.Children.Add(joint.Visual);
+                    break;
+                case Segment segment:
+                    Canvas.Children.Add(segment.Visual);
+                    break;
+                }
+            }
+
+            //if (ChainList.Count == 1)//?
+                //CenterCircleSetPosition();
+
         }
 
         private void CenterCircleSetPosition(object sender = null, RoutedEventArgs e = null)

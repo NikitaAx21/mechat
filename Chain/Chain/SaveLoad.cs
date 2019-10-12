@@ -8,7 +8,7 @@ using System.Reflection;
 
 using System.Windows;//?????
 
-//Command="{Binding Load2, Mode=OneTime}"
+/*/Command="{Binding Load2, Mode=OneTime}"
 namespace Chain
 {
     public class SaveLoad
@@ -51,11 +51,11 @@ namespace Chain
                     }
                     else //=================================================================exeption?
                     {
-                        Obj = new Segment();//???
+                        Obj = new Joint();    //???
                     }
-                    
 
-                        Type myClassType = Obj.GetType();
+
+                            Type myClassType = Obj.GetType();
                         PropertyInfo[] properties = myClassType.GetProperties();
 
                         foreach (PropertyInfo property in properties)
@@ -96,6 +96,27 @@ namespace Chain
                 }
             }
         }
+
+        //======
+         private void DeleteObject(object sender, RoutedEventArgs e)
+        {
+            foreach (var o in ChainList.Where(o => o.Id >= Panel.SelectedObject.Id))
+            {
+                switch (o)
+                {
+                    case Joint a:
+                        Canvas.Children.Remove(a.Visual);
+                        break;
+                    case Segment b:
+                        Canvas.Children.Remove(b.Visual);
+                        break;
+                }
+            }
+
+            LManager.Delete(Panel.SelectedObject.Id);
+            Panel.SelectedObject = ChainList.LastOrDefault();
+        }
+        /////=========
 
 
 
@@ -168,4 +189,4 @@ namespace Chain
         }
     }
 }
-
+*/
