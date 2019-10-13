@@ -6,14 +6,31 @@ using System.Threading.Tasks;
 
 namespace Chain
 {
-    public static class DegreeToRad
+    public static class Calc
     {
         
         public static double DegreeToRadian(double A)
         {
             return (Math.PI * A / 180.0);
         }
-    }
+        public static bool IsIntersected(Point a, Point b, Point c, Point d)
+        {
+            double common = (b.X - a.X) * (d.Y - c.Y) - (b.Y - a.Y) * (d.X - c.X);
+
+            if (common == 0) return false; //они параллельны
+
+            double rH = (a.Y - c.Y) * (d.X - c.X) - (a.X - c.X) * (d.Y - c.Y);
+            double sH = (a.Y - c.Y) * (b.X - a.X) - (a.X - c.X) * (b.Y - a.Y);
+            double r = rH / common;
+            double s = sH / common;
+
+            if (r >= 0 && r <= 1 && s >= 0 && s <= 1)
+                return true;
+            else
+                return false;
+        }
+    } 
+
     public class TransformationMatrix
     {
         public double[,] matr = new double[3, 3];
@@ -33,10 +50,11 @@ namespace Chain
             matr[2, 1] = 0;
             matr[2, 2] = 1;
         }
+
         public TransformationMatrix(double angle)
         {
             curAngle = curAngle + angle;
-            double rad = DegreeToRad.DegreeToRadian(curAngle); //Поменять везде
+            double rad = Calc.DegreeToRadian(curAngle); //Поменять везде
             matr[0, 0] = Math.Cos(rad);
             matr[0, 1] = Math.Sin(rad);
             matr[0, 2] = X; //исправить на length 
@@ -60,8 +78,8 @@ namespace Chain
         }
         public CoordMatrix(Segment S, Joint J)
         {
-            vect[0] = S.Length * Math.Sin(DegreeToRad.DegreeToRadian(J.CurrentAngle));
-            vect[1] = S.Length * Math.Cos(DegreeToRad.DegreeToRadian(J.CurrentAngle));
+            vect[0] = S.Length * Math.Sin(Calc.DegreeToRadian(J.CurrentAngle));
+            vect[1] = S.Length * Math.Cos(Calc.DegreeToRadian(J.CurrentAngle));
             vect[2] = 1;
         }
         
