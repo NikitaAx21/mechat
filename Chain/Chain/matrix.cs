@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Chain
 {
     class Matrix
     {
-        double dX;
-        double dY;
+        private double dX;
+        private double dY;
         public double[,] matr = new double[3, 3];
-        public double[] vect= new double[3];
-        
-        /*Метод для вычисления координат в Лаб.С.К.
-          В метод передается матрица преобразования и вектор координат в собственной с.к.
-          Возвращается Point из двух элементов [x,y]
-        */
+        public double[] vect = new double[3];
+
+        /// <summary>
+        /// Метод для вычисления координат в Лаб.С.К.
+        ///В метод передается матрица преобразования и вектор координат в собственной с.к.
+        ///Возвращается Point из двух элементов[x, y]
+        /// </summary>
+        /// <param name="tM"></param>
+        /// <param name="cM"></param>
+        /// <returns></returns>
         public Point LabCoord(TransformationMatrix tM, CoordMatrix cM)
         {
             Point res = new Point();

@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 
 namespace Chain
 {
     public static class Calc
     {
-        
         public static double DegreeToRadian(double A)
         {
-            return (Math.PI * A / 180.0);
+            return Math.PI * A / 180.0;
         }
         public static bool IsIntersected(Point a, Point b, Point c, Point d)
         {
@@ -29,12 +25,12 @@ namespace Chain
             else
                 return false;
         }
-    } 
+    }
 
     public class TransformationMatrix
     {
         public double[,] matr = new double[3, 3];
-        double curAngle = 0;
+        private double curAngle = 0;
         public double X = 0; //для хранения координаты конца предыдущего сегмента
         public double Y = 0;
 
@@ -82,7 +78,7 @@ namespace Chain
             vect[1] = S.Length * Math.Cos(Calc.DegreeToRadian(J.CurrentAngle));
             vect[2] = 1;
         }
-        
+
 
     }
     public class RotateMatrix
@@ -90,7 +86,7 @@ namespace Chain
         public double[,] matr = new double[3, 3];
         public RotateMatrix(double angle)
         {
-            double rad = DegreeToRad.DegreeToRadian(angle);
+            double rad = Calc.DegreeToRadian(angle);
             matr[0, 0] = Math.Cos(rad);
             matr[0, 1] = Math.Sin(rad);
             matr[0, 2] = 0;
@@ -101,7 +97,7 @@ namespace Chain
             matr[2, 1] = 0;
             matr[2, 2] = 1;
         }
-        
+
     }
 
 }
