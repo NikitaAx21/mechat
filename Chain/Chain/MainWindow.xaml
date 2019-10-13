@@ -56,11 +56,11 @@
 					<Button Grid.Column="0"
 							Margin="5"
 							Content="Загрузить"
-                            Click="LoadList"/>
+							Click="LoadList" />
 					<Button Grid.Column="1"
 							Margin="5"
 							Content="Сохранить"
-                            Click="SaveList"/>
+							Click="SaveList" />
 					<CheckBox Content="Отображать центры масс"
 							  VerticalAlignment="Center"
 							  Margin="5"
