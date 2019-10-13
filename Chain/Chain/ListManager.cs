@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using System.Xml;
 using System.Xml.Linq;
 using System.Windows;
+using System.Globalization;
 
 namespace Chain
 {
@@ -23,7 +24,7 @@ namespace Chain
         public void Add()
         {
             var isNeedToCreateSegment = _list.Count != 0 && _list.Last() is Joint;
-            var obj = isNeedToCreateSegment ? (Object) new Segment() : new Joint();
+            var obj = isNeedToCreateSegment ? (Object)new Segment() : new Joint();
 
             obj.Id = _list.Count;
             obj.OnSelectedChanged += Select;
@@ -40,7 +41,7 @@ namespace Chain
             _list.RemoveAll(o => o.Id >= id);
         }
 
-        string path = "";
+        private string path = "";
 
         public void Load(List<Object> ChainList)//из файла
         {
@@ -53,73 +54,66 @@ namespace Chain
                     MessageBox.Show("Выберите файл с расширением \".xml\".");//
             }
 
-            if (!String.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(path))
             {
-                XmlDocument dataXml = new XmlDocument();
+                var dataXml = new XmlDocument();
                 try
                 {
                     dataXml.Load(path);
-
-                    XmlElement xRoot = dataXml.DocumentElement;//SourceData
-                    XmlNode xNode = xRoot.FirstChild;//Object
-                    try
-                    {
-                        foreach (XmlNode node in xNode.ChildNodes)
-                        {
-                            Object Obj= new Joint();
-
-                            if (node.Name == "Joint")
-                            {
-                                Obj = new Joint();
-                            }
-                            if (node.Name == "Segment")
-                            {
-                                Obj = new Segment();
-                            }
-                            if ((node.Name != "Segment")&&(node.Name != "Joint")) //=================================================================exeption?
-                            {
-                                throw new Exception("Некорректное содержимое файла");
-                            }
-
-
-                            Type myClassType = Obj.GetType();
-                            PropertyInfo[] properties = myClassType.GetProperties();
-
-                            foreach (PropertyInfo property in properties)
-                            {
-                                foreach (XmlNode attribut in node.Attributes)
-                                {
-                                    if (property.Name == attribut.Name)
-                                    {
-                                        string value_type = property.PropertyType.Name;
-                                        switch (value_type)
-                                        {
-                                            case "Double":
-                                                var attr1 = double.Parse(attribut.Value);
-                                                property.SetValue(Obj, attr1);
-                                                break;
-                                            case "Boolean":
-                                                var attr2 = bool.Parse(attribut.Value);
-                                                property.SetValue(Obj, attr2);
-                                                break;
-                                            default:
-
-                                                break;//???
-                                        }
-                                    }
-                                }
-                            }
-                            ChainList.Add(Obj);
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Некорректное содержимое файла.");//
-                    }
                 }
                 catch
                 {
-                    MessageBox.Show("Не удалось загрузить файл.");//
+                    MessageBox.Show("Не удалось загрузить файл.");
+                    return;
+                }
+
+                var xRoot = dataXml.DocumentElement;//SourceData
+                var xNode = xRoot.FirstChild;//Object
+                try
+                {
+                    foreach (XmlNode node in xNode.ChildNodes)
+                    {
+                        if ((node.Name != "Segment") && (node.Name != "Joint"))
+                        {
+                            throw new Exception("Некорректное содержимое файла");
+                        }
+
+                        Object Obj = node.Name == "Joint" ? new Joint() : (Object)new Segment();
+
+                        var myClassType = Obj.GetType();
+                        var properties = myClassType.GetProperties();
+
+                        foreach (var property in properties)
+                        {
+                            foreach (XmlNode attribut in node.Attributes)
+                            {
+                                if (property.Name == attribut.Name)
+                                {
+                                    var value_type = property.PropertyType.Name;
+                                    switch (value_type)
+                                    {
+                                        case "Double":
+                                            var attr1 = double.Parse(attribut.Value, CultureInfo.InvariantCulture);
+                                            property.SetValue(Obj, attr1);
+                                            break;
+                                        case "Boolean":
+                                            var attr2 = bool.Parse(attribut.Value);
+                                            property.SetValue(Obj, attr2);
+                                            break;
+                                        default:
+
+                                            break;//???
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        ChainList.Add(Obj);
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "Ошибка при загрузке фафла");
                 }
             }
         }
@@ -127,39 +121,35 @@ namespace Chain
         public void Save(List<Object> ChainList)//в файл
         {
 
-            XDocument xdoc = new XDocument();//создаём документ
+            var xdoc = new XDocument();//создаём документ
 
-            XElement FirstElement = new XElement("Objects");// создаем первый элемент
+            var FirstElement = new XElement("Objects");// создаем первый элемент
 
             try
             {
-                for (int i = 0; i < ChainList.Count; i++)
+                foreach (Object element in ChainList)
                 {
-
                     Object Obj;
 
-                    Obj = ChainList[i] as Joint;
+                    Obj = element as Joint;
                     string tag = "Joint";
                     if (Obj == null)
                     {
-                        Obj = ChainList[i] as Segment;
+                        Obj = element as Segment;
                         tag = "Segment";
                     }
 
-                    XElement Element = new XElement(tag);
+                    var Element = new XElement(tag);
 
-                    Type myClassType = Obj.GetType();
-                    PropertyInfo[] properties = myClassType.GetProperties();
+                    var myClassType = Obj.GetType();
+                    var properties = myClassType.GetProperties();
 
                     foreach (PropertyInfo property in properties)
                     {
-
-                        if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")///???|| property.PropertyType.Name == "Point"
+                        if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
                         {
-
-                            XAttribute Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
+                            var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
                             Element.Add(Attrib);
-
                         }
                     }
 
