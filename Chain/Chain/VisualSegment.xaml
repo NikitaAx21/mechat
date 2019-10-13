@@ -34,8 +34,13 @@
 				   Style="{StaticResource RectStyle}" />
 		<!--Сам сегмент-->
 		<Rectangle Stroke="Gray"
-				   StrokeThickness="1"
-				   Style="{StaticResource RectStyle}" />
+				   StrokeThickness="1">
+			<Rectangle.Style>
+				<Style BasedOn="{StaticResource RectStyle}" TargetType="Rectangle">
+
+				</Style>
+			</Rectangle.Style>
+		</Rectangle>
 		<Ellipse Stretch="Fill"
 				 Width="3"
 				 Height="3"

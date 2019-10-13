@@ -5,41 +5,42 @@ using System.Windows.Input;
 
 namespace Chain
 {
-    /// <summary>
-    /// Логика взаимодействия для VisualJoint.xaml
-    /// </summary>
-    public partial class VisualJoint : UserControl
-    {
-        public VisualJoint(Joint parent)
-        {
-            ParentObject = parent;
-            InitializeComponent();
-        }
+	/// <summary>
+	/// Логика взаимодействия для VisualJoint.xaml
+	/// </summary>
+	public partial class VisualJoint : UserControl
+	{
+		public VisualJoint(Joint parent)
+		{
+			ParentObject = parent;
+			InitializeComponent();
+		}
 
-        public void SetPosition(double height, double width)
-        {
-            var halfWidth = width - ActualWidth / 2;
-            var halfHeight = height - ActualHeight / 2;
-            Margin = new Thickness(halfWidth, halfHeight, halfWidth, halfHeight);
-        }
+		public void SetPosition(double height, double width)
+		{
+			var halfWidth = width - ActualWidth / 2;
+			var halfHeight = height - ActualHeight / 2;
+			Margin = new Thickness(halfWidth, halfHeight, halfWidth, halfHeight);
+		}
 
-        public Joint ParentObject { get; set; }
-        public void PutOnCenter()
-        {
-            var canvas = VisualParent as Canvas;
-            if (canvas == null)
-                return;
+		public Joint ParentObject { get; set; }
 
-            var halfWidth = canvas.ActualWidth / 2;
-            var halfHeight = canvas.ActualHeight / 2;
-            SetPosition(halfHeight, halfWidth);
-        }
+		public void PutOnCenter()
+		{
+			var canvas = VisualParent as Canvas;
+			if (canvas == null)
+				return;
 
-        public event Action OnSelectedChanged;
+			var halfWidth = canvas.ActualWidth / 2;
+			var halfHeight = canvas.ActualHeight / 2;
+			SetPosition(halfHeight, halfWidth);
+		}
 
-        private void OnSelected(object sender, MouseButtonEventArgs e)
-        {
-            OnSelectedChanged?.Invoke();
-        }
-    }
+		public event Action OnSelectedChanged;
+
+		private void OnSelected(object sender, MouseButtonEventArgs e)
+		{
+			OnSelectedChanged?.Invoke();
+		}
+	}
 }
