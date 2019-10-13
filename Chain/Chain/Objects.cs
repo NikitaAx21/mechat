@@ -5,192 +5,195 @@ using System.Windows;
 
 namespace Chain
 {
-    public abstract class Object : INotifyPropertyChanged
-    {
-        public int Id;
-        private bool _isMassCenterVisible;
-        private double _mass;
-        private bool _isSelected;
-        public virtual event Action<Object> OnSelectedChanged;
+	public abstract class Object : INotifyPropertyChanged
+	{
+		public int Id;
+		private bool _isMassCenterVisible;
+		private double _mass;
+		private bool _isSelected;
+		public virtual event Action<Object> OnSelectedChanged;
 
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set
-            {
-                _isSelected = value;
-                NotifyPropertyChanged(() => IsSelected);
-            }
-        }
+		public bool IsSelected
+		{
+			get => _isSelected;
+			set
+			{
+				_isSelected = value;
+				NotifyPropertyChanged(() => IsSelected);
+			}
+		}
 
-        public bool IsMassCenterVisible
-        {
-            get => _isMassCenterVisible;
-            set
-            {
-                _isMassCenterVisible = value;
-                NotifyPropertyChanged(() => IsMassCenterVisible);
-            }
-        }
+		public bool IsMassCenterVisible
+		{
+			get => _isMassCenterVisible;
+			set
+			{
+				_isMassCenterVisible = value;
+				NotifyPropertyChanged(() => IsMassCenterVisible);
+			}
+		}
 
-        public double Mass
-        {
-            get => _mass;
-            set
-            {
-                _mass = value;
-                NotifyPropertyChanged(() => Mass);
-            }
-        }
+		public double Mass
+		{
+			get => _mass;
+			set
+			{
+				_mass = value;
+				NotifyPropertyChanged(() => Mass);
+			}
+		}
 
-        protected Object()
-        {
-            IsMassCenterVisible = false;
-            Mass = 10;
-            Id = 0;
-        }
+		protected Object()
+		{
+			IsMassCenterVisible = false;
+			Mass = 10;
+			Id = 0;
+		}
 
-        public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
-        public void NotifyPropertyChanged<T>(Expression<Func<T>> property)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                string propertyName = ((MemberExpression)property.Body).Member.Name;
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
+		public void NotifyPropertyChanged<T>(Expression<Func<T>> property)
+		{
+			var handler = PropertyChanged;
+			if (handler != null)
+			{
+				string propertyName = ((MemberExpression)property.Body).Member.Name;
+				handler(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
 
-    public class Segment : Object
-    {
-        public double Length
-        {
-            get => _length;
-            set
-            {
-                _length = value;
-                NotifyPropertyChanged(() => Length);
-            }
-        }
+	public class Segment : Object
+	{
+		public double Length
+		{
+			get => _length;
+			set
+			{
+				_length = value;
+				NotifyPropertyChanged(() => Length);
+			}
+		}
 
-        public Point Vector; //пересчёт из длины и угла предыдущего сустава
-        private double _length;
-        private bool _visibility;
-        private bool _efemerik;
+		public Point Vector; //пересчёт из длины и угла предыдущего сустава
+		private double _length;
+		private bool _visibility;
+		private bool _efemerik;
 
-        public bool Visibility
-        {
-            get => _visibility;
-            set
-            {
-                _visibility = value;
-                NotifyPropertyChanged(() => Visibility);
-            }
-        }
+		public bool Visibility
+		{
+			get => _visibility;
+			set
+			{
+				_visibility = value;
+				NotifyPropertyChanged(() => Visibility);
+			}
+		}
 
-        public bool Efemerik
-        {
-            get => _efemerik;
-            set
-            {
-                _efemerik = value;
-                NotifyPropertyChanged(() => Efemerik);
-            }
-        }
+		public bool Efemerik
+		{
+			get => _efemerik;
+			set
+			{
+				_efemerik = value;
+				NotifyPropertyChanged(() => Efemerik);
+			}
+		}
 
-        public VisualSegment Visual { get; set; }
+		public VisualSegment Visual { get; set; }
 
-        public override event Action<Object> OnSelectedChanged;
+		public override event Action<Object> OnSelectedChanged;
 
-        private void RaiseSelectedChanged()
-        {
-            OnSelectedChanged?.Invoke(this);
-        }
-        public Segment()
-        {
-            Visual = new VisualSegment(this);
-            Visual.OnSelectedChanged += RaiseSelectedChanged;
+		private void RaiseSelectedChanged()
+		{
+			OnSelectedChanged?.Invoke(this);
+		}
 
-            Vector.X = 0;
-            Vector.Y = 2;
-            Length = 20;
+		public Segment()
+		{
+			Visual = new VisualSegment(this);
+			Visual.OnSelectedChanged += RaiseSelectedChanged;
 
-            Visibility = true;
-            Efemerik = false;
-        }
-    }
+			Vector.X = 0;
+			Vector.Y = 2;
+			Length = 20;
 
-    public class Joint : Object
-    {
-        private double _angleRestrictionLeft;
-        private double _angleRestrictionRight;
-        private double _currentAngle;
-        private bool _isAngleRestricted;
+			Visibility = true;
+			Efemerik = false;
+		}
+	}
 
-        public double CurrentAngle
-        {
-            get => _currentAngle;
-            set
-            {
-                _currentAngle = value;
-                NotifyPropertyChanged(() => CurrentAngle);
-            }
-        }
+	public class Joint : Object
+	{
+		private double _angleRestrictionLeft;
+		private double _angleRestrictionRight;
+		private double _currentAngle;
+		private bool _isAngleRestricted;
 
-        public bool IsAngleRestricted
-        {
-            get => _isAngleRestricted;
-            set
-            {
-                _isAngleRestricted = value;
-                if (!_isAngleRestricted)
-                {
-                    AngleRestrictionLeft = -180d;
-                    AngleRestrictionRight = 180d;
-                }
-                NotifyPropertyChanged(() => IsAngleRestricted);
-            }
-        }
+		public double CurrentAngle
+		{
+			get => _currentAngle;
+			set
+			{
+				_currentAngle = value;
+				NotifyPropertyChanged(() => CurrentAngle);
+			}
+		}
 
-        public double AngleRestrictionLeft
-        {
-            get => _angleRestrictionLeft;
-            set
-            {
-                _angleRestrictionLeft = value;
-                NotifyPropertyChanged(() => AngleRestrictionLeft);
-            }
-        }
+		public bool IsAngleRestricted
+		{
+			get => _isAngleRestricted;
+			set
+			{
+				_isAngleRestricted = value;
+				if (!_isAngleRestricted)
+				{
+					AngleRestrictionLeft = -180d;
+					AngleRestrictionRight = 180d;
+				}
 
-        public double AngleRestrictionRight
-        {
-            get => _angleRestrictionRight;
-            set
-            {
-                _angleRestrictionRight = value;
-                NotifyPropertyChanged(() => AngleRestrictionRight);
-            }
-        }
+				NotifyPropertyChanged(() => IsAngleRestricted);
+			}
+		}
 
-        public VisualJoint Visual { get; set; }
-        public override event Action<Object> OnSelectedChanged;
+		public double AngleRestrictionLeft
+		{
+			get => _angleRestrictionLeft;
+			set
+			{
+				_angleRestrictionLeft = value;
+				NotifyPropertyChanged(() => AngleRestrictionLeft);
+			}
+		}
 
-        private void RaiseSelectedChanged()
-        {
-            OnSelectedChanged?.Invoke(this);
-        }
-        public Joint()
-        {
-            Visual = new VisualJoint(this);
-            Visual.OnSelectedChanged += RaiseSelectedChanged;
-            CurrentAngle = 0;
+		public double AngleRestrictionRight
+		{
+			get => _angleRestrictionRight;
+			set
+			{
+				_angleRestrictionRight = value;
+				NotifyPropertyChanged(() => AngleRestrictionRight);
+			}
+		}
 
-            IsAngleRestricted = false;
+		public VisualJoint Visual { get; set; }
+		public override event Action<Object> OnSelectedChanged;
 
-            AngleRestrictionLeft = -180;
-            AngleRestrictionRight = 180;
-        }
-    }
+		private void RaiseSelectedChanged()
+		{
+			OnSelectedChanged?.Invoke(this);
+		}
+
+		public Joint()
+		{
+			Visual = new VisualJoint(this);
+			Visual.OnSelectedChanged += RaiseSelectedChanged;
+			CurrentAngle = 0;
+
+			IsAngleRestricted = false;
+
+			AngleRestrictionLeft = -180;
+			AngleRestrictionRight = 180;
+		}
+	}
 }
