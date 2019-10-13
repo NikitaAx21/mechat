@@ -26,6 +26,53 @@ namespace Chain
 		public List<Object> ChainList = new List<Object>();
 		public ListManager LManager;
 
+		private void SaveList(object sender, RoutedEventArgs e)
+		{
+			LManager.Save(ChainList);
+		}
+
+		private void LoadList(object sender, RoutedEventArgs e) //==??==
+		{
+			foreach (var o in ChainList)
+			{
+				switch (o)
+				{
+					case Joint a:
+						Canvas.Children.Remove(a.Visual);
+						break;
+
+					case Segment b:
+						Canvas.Children.Remove(b.Visual);
+						break;
+				}
+			}
+
+			LManager.Delete(0);
+
+			LManager.Load(ChainList);
+
+			//==============================
+
+			foreach (var o in ChainList)
+			{
+				switch (o)
+				{
+					case Joint joint:
+						Canvas.Children.Add(joint.Visual);
+						break;
+
+					case Segment segment:
+						Canvas.Children.Add(segment.Visual);
+						break;
+				}
+			}
+
+			Panel.SelectedObject = ChainList.LastOrDefault();
+
+			//if (ChainList.Count == 1)//?
+			//CenterCircleSetPosition();
+		}
+
 		private void CenterCircleSetPosition(object sender = null, RoutedEventArgs e = null)
 		{
 			if (ChainList.FirstOrDefault() is Joint joint)
