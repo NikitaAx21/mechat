@@ -18,17 +18,30 @@ namespace Chain
 			_panel = panel;
 		}
 
-		private readonly List<Object> _list;
+		private  List<Object> _list;
 		private readonly Panel _panel;
 
-		public void Add()
-		{
-			var isNeedToCreateSegment = _list.Count != 0 && _list.Last() is Joint;
-			var obj = isNeedToCreateSegment ? (Object)new Segment() : new Joint();
+		public void Add(Object objec = null)
+        {
+            if (objec == null)
+            {
+                var isNeedToCreateSegment = _list.Count != 0 && _list.Last() is Joint;
+			    var obj = isNeedToCreateSegment ? (Object)new Segment() : new Joint();
 
-			obj.Id = _list.Count;
-			obj.Visual.OnSelectedChanged += Select;
-			_list.Add(obj);
+			    obj.Id = _list.Count;
+			    obj.Visual.OnSelectedChanged += Select;
+			    _list.Add(obj);
+                return;
+            }
+            else
+            {
+
+                objec.Id = _list.Count;
+                objec.Visual.OnSelectedChanged += Select;
+                _list.Add(objec);
+                return;
+
+            }
 		}
 
 		private void Select(VisualObject obj)
@@ -132,7 +145,8 @@ namespace Chain
 
 					Delete(0);
 
-					ChainList1 = ProxyChainList;
+                    _list = ProxyChainList;
+                    ChainList1 = ProxyChainList;
 				}
 				catch (Exception e)
 				{
@@ -168,14 +182,13 @@ namespace Chain
 
 					foreach (PropertyInfo property in properties)
 					{
-						if (property.Name != "IsSelected")
-						{
+						
 							if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
 							{
 								var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
 								Element.Add(Attrib);
 							}
-						}
+						
 					}
 
 					FirstElement.Add(Element);
