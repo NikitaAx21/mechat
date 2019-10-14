@@ -27,15 +27,13 @@ namespace Chain
 			var obj = isNeedToCreateSegment ? (Object)new Segment() : new Joint();
 
 			obj.Id = _list.Count;
-			obj.OnSelectedChanged += Select;
+			obj.Visual.OnSelectedChanged += Select;
 			_list.Add(obj);
 		}
 
-        
-
-        private void Select(Object obj)
+		private void Select(VisualObject obj)
 		{
-			_panel.SelectedObject = obj;
+			_panel.SelectedObject = obj.ParentObject;
 		}
 
 		public void Delete(int id)
@@ -47,9 +45,9 @@ namespace Chain
 
 		public void Load(List<Object> ChainList, out List<Object> ChainList1) //из файла
 		{
-            ChainList1 = ChainList;
+			ChainList1 = ChainList;
 
-            OpenFileDialog fileChoose = new OpenFileDialog();
+			OpenFileDialog fileChoose = new OpenFileDialog();
 			if (fileChoose.ShowDialog() == true)
 			{
 				if (fileChoose.FileName.Split('.')[fileChoose.FileName.Split('.').Length - 1].ToLower() == "xml")
@@ -60,9 +58,9 @@ namespace Chain
 
 			if (!string.IsNullOrEmpty(path))
 			{
-                List<Object> ProxyChainList = new List<Object> ();
+				List<Object> ProxyChainList = new List<Object>();
 
-                var dataXml = new XmlDocument();
+				var dataXml = new XmlDocument();
 				try
 				{
 					dataXml.Load(path);
@@ -76,11 +74,12 @@ namespace Chain
 				var xRoot = dataXml.DocumentElement; //SourceData
 				var xNode = xRoot.FirstChild; //Object
 
-                if (xNode.ChildNodes[0].Name != "Joint")//  
-                {
-                    throw new Exception("Некорректное содержимое файла.");
-                }
-                try
+				if (xNode.ChildNodes[0].Name != "Joint") //  
+				{
+					throw new Exception("Некорректное содержимое файла.");
+				}
+
+				try
 				{
 					foreach (XmlNode node in xNode.ChildNodes)
 					{
@@ -89,15 +88,12 @@ namespace Chain
 							throw new Exception("Некорректное содержимое файла");
 						}
 
-                        
+						if (ProxyChainList.Count > 0 && (ProxyChainList.Last().GetType().Name == node.Name)) //  
+						{
+							throw new Exception("Некорректное содержимое файла.");
+						}
 
-                        if (ProxyChainList.Count>0 && (ProxyChainList.Last().GetType().Name == node.Name) )//  
-                        {
-                            throw new Exception("Некорректное содержимое файла.");
-                        }
-
-
-                        Object Obj = node.Name == "Joint" ? new Joint() : (Object)new Segment();
+						Object Obj = node.Name == "Joint" ? new Joint() : (Object)new Segment();
 
 						var myClassType = Obj.GetType();
 						var properties = myClassType.GetProperties();
@@ -131,15 +127,13 @@ namespace Chain
 							}
 						}
 
-                        ProxyChainList.Add(Obj);
+						ProxyChainList.Add(Obj);
 					}
 
-                    Delete(0);
+					Delete(0);
 
-
-                    ChainList1 = ProxyChainList;
-
-                }
+					ChainList1 = ProxyChainList;
+				}
 				catch (Exception e)
 				{
 					MessageBox.Show(e.Message, "Ошибка при загрузке фафла");
@@ -147,10 +141,7 @@ namespace Chain
 			}
 		}
 
-
-        
-
-            public void Save(List<Object> ChainList) //в файл
+		public void Save(List<Object> ChainList) //в файл
 		{
 			var xdoc = new XDocument(); //создаём документ
 
@@ -177,15 +168,14 @@ namespace Chain
 
 					foreach (PropertyInfo property in properties)
 					{
-                        if (property.Name != "IsSelected")
-                        {
-                            if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
-						    {
-							    var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
-							    Element.Add(Attrib);
-						    }
-                        }
-						
+						if (property.Name != "IsSelected")
+						{
+							if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
+							{
+								var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
+								Element.Add(Attrib);
+							}
+						}
 					}
 
 					FirstElement.Add(Element);

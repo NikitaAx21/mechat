@@ -65,6 +65,7 @@
     <Compile Include="Panel.xaml.cs">
       <DependentUpon>Panel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VisualObject.cs" />
     <Compile Include="VisualSegment.xaml.cs">
       <DependentUpon>VisualSegment.xaml</DependentUpon>
     </Compile>
