@@ -60,8 +60,6 @@
     </Compile>
     <Compile Include="ListManager.cs" />
     <Compile Include="DoubleTrimmingConverter.cs" />
-    <Compile Include="matr.cs" />
-    <Compile Include="matrix.cs" />
     <Compile Include="NullToBoolConverter.cs" />
     <Compile Include="NullToVisibilityConverter.cs" />
     <Compile Include="Panel.xaml.cs">
