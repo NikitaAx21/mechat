@@ -12,33 +12,35 @@ namespace Chain
 {
 	public class ListManager
 	{
-		public ListManager(List<Object> list, Panel panel)
+		public ListManager(/*List<Object> list,*/ Panel panel)
 		{
-			_list = list;
-			_panel = panel;
+            //_list = list;
+            ChainList = new List<Object>();
+
+            _panel = panel;
 		}
 
-		private  List<Object> _list;
+		public  List<Object> ChainList;
 		private readonly Panel _panel;
 
 		public void Add(Object objec = null)
         {
             if (objec == null)
             {
-                var isNeedToCreateSegment = _list.Count != 0 && _list.Last() is Joint;
+                var isNeedToCreateSegment = ChainList.Count != 0 && ChainList.Last() is Joint;
 			    var obj = isNeedToCreateSegment ? (Object)new Segment() : new Joint();
 
-			    obj.Id = _list.Count;
+			    obj.Id = ChainList.Count;
 			    obj.Visual.OnSelectedChanged += Select;
-			    _list.Add(obj);
+                ChainList.Add(obj);
                 return;
             }
             else
             {
 
-                objec.Id = _list.Count;
+                objec.Id = ChainList.Count;
                 objec.Visual.OnSelectedChanged += Select;
-                _list.Add(objec);
+                ChainList.Add(objec);
                 return;
 
             }
@@ -51,7 +53,7 @@ namespace Chain
 
 		public void Delete(int id)
 		{
-			_list.RemoveAll(o => o.Id >= id);
+            ChainList.RemoveAll(o => o.Id >= id);
 		}
 
 		private string path = "";
@@ -140,12 +142,27 @@ namespace Chain
 							}
 						}
 
+                        if (node.Name == "Joint")
+                        {
+                            Joint Joi = Obj as Joint;
+                            if (Joi.IsAngleRestricted && Joi.AngleRestrictionLeft < Joi.CurrentAngle && Joi.CurrentAngle < Joi.AngleRestrictionRight)
+                            {
+                                throw new Exception("Некорректное содержимое файла. Не верные параметры углов.");
+                            }
+
+                        }
+
 						ProxyChainList.Add(Obj);
 					}
 
 					Delete(0);
 
-                    _list = ProxyChainList;
+                    //_list = ProxyChainList;
+                    foreach (Object element in ProxyChainList)
+                    {
+                        Add(element);
+                    }
+
                     ChainList1 = ProxyChainList;
 				}
 				catch (Exception e)

@@ -12,10 +12,10 @@ namespace Chain
 		public MainWindow()
 		{
 			InitializeComponent();
-			LManager = new ListManager(ChainList, Panel);
+			LManager = new ListManager(Panel);
 
 			LManager.Add();
-			var center = ChainList.Last() as Joint;
+			var center = LManager.ChainList.Last() as Joint;
 			if (center == null)
 				return;
 
@@ -23,33 +23,33 @@ namespace Chain
 			Canvas.Children.Add(center.Visual);
 		}
 
-		public List<Object> ChainList = new List<Object>();
+		//public List<Object> ChainList = new List<Object>();
 		public ListManager LManager;
 
 		private void SaveList(object sender, RoutedEventArgs e)
 		{
-			LManager.Save(ChainList);
+			LManager.Save(LManager.ChainList);
 		}
 
 		private void LoadList(object sender, RoutedEventArgs e)
 		{
-			foreach (var o in ChainList)
+			foreach (var o in LManager.ChainList)
 			{
 				Canvas.Children.Remove(o.Visual);
 			}
 
 			//LManager.Delete(0);
 
-			LManager.Load(ChainList, out ChainList);
+			LManager.Load(LManager.ChainList, out LManager.ChainList);
 
 			//==============================
 
-			foreach (var o in ChainList)
+			foreach (var o in LManager.ChainList)
 			{
 				Canvas.Children.Add(o.Visual);
 			}
 
-			Panel.SelectedObject = ChainList.FirstOrDefault();
+			Panel.SelectedObject = LManager.ChainList.FirstOrDefault();
 
 			//if (ChainList.Count == 1)//?
 			CenterCircleSetPosition();
@@ -57,7 +57,7 @@ namespace Chain
 
 		private void CenterCircleSetPosition(object sender = null, RoutedEventArgs e = null)
 		{
-			if (ChainList.FirstOrDefault() is Joint joint)
+			if (LManager.ChainList.FirstOrDefault() is Joint joint)
 			{
 				var visualJoint = joint.Visual as VisualJoint;
 				visualJoint?.PutOnCenter();
@@ -66,22 +66,22 @@ namespace Chain
 
 		private void DeleteObject(object sender, RoutedEventArgs e)
 		{
-			foreach (var o in ChainList.Where(o => o.Id >= Panel.SelectedObject.Id))
+			foreach (var o in LManager.ChainList.Where(o => o.Id >= Panel.SelectedObject.Id))
 			{
 				Canvas.Children.Remove(o.Visual);
 			}
 
 			LManager.Delete(Panel.SelectedObject.Id);
-			Panel.SelectedObject = ChainList.LastOrDefault();
+			Panel.SelectedObject = LManager.ChainList.LastOrDefault();
 		}
 
-		private void AddObject(object sender, RoutedEventArgs e)
+		private void AddObject(object sender, RoutedEventArgs e)//=====
 		{
 			LManager.Add();
-			var obj = ChainList.Last();
+			var obj = LManager.ChainList.Last();
 			Canvas.Children.Add(obj.Visual);
 
-			if (ChainList.Count == 1)
+			if (LManager.ChainList.Count == 1)
 				CenterCircleSetPosition();
 		}
 	}
