@@ -31,7 +31,7 @@ namespace Chain
 			LManager.Save(ChainList);
 		}
 
-		private void LoadList(object sender, RoutedEventArgs e) //==??==
+		private void LoadList(object sender, RoutedEventArgs e) 
 		{
 			foreach (var o in ChainList)
 			{
@@ -47,9 +47,9 @@ namespace Chain
 				}
 			}
 
-			LManager.Delete(0);
+			//LManager.Delete(0);
 
-			LManager.Load(ChainList);
+			LManager.Load(ChainList,out ChainList);
 
 			//==============================
 
@@ -67,10 +67,10 @@ namespace Chain
 				}
 			}
 
-			Panel.SelectedObject = ChainList.LastOrDefault();
+			Panel.SelectedObject = ChainList.FirstOrDefault();
 
 			//if (ChainList.Count == 1)//?
-			//CenterCircleSetPosition();
+			CenterCircleSetPosition();
 		}
 
 		private void CenterCircleSetPosition(object sender = null, RoutedEventArgs e = null)

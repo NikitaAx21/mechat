@@ -31,7 +31,9 @@ namespace Chain
 			_list.Add(obj);
 		}
 
-		private void Select(Object obj)
+        
+
+        private void Select(Object obj)
 		{
 			_panel.SelectedObject = obj;
 		}
@@ -43,9 +45,11 @@ namespace Chain
 
 		private string path = "";
 
-		public void Load(List<Object> ChainList) //из файла
+		public void Load(List<Object> ChainList, out List<Object> ChainList1) //из файла
 		{
-			OpenFileDialog fileChoose = new OpenFileDialog();
+            ChainList1 = ChainList;
+
+            OpenFileDialog fileChoose = new OpenFileDialog();
 			if (fileChoose.ShowDialog() == true)
 			{
 				if (fileChoose.FileName.Split('.')[fileChoose.FileName.Split('.').Length - 1].ToLower() == "xml")
@@ -56,7 +60,9 @@ namespace Chain
 
 			if (!string.IsNullOrEmpty(path))
 			{
-				var dataXml = new XmlDocument();
+                List<Object> ProxyChainList = new List<Object> ();
+
+                var dataXml = new XmlDocument();
 				try
 				{
 					dataXml.Load(path);
@@ -69,7 +75,12 @@ namespace Chain
 
 				var xRoot = dataXml.DocumentElement; //SourceData
 				var xNode = xRoot.FirstChild; //Object
-				try
+
+                if (xNode.ChildNodes[0].Name != "Joint")//  
+                {
+                    throw new Exception("Некорректное содержимое файла.");
+                }
+                try
 				{
 					foreach (XmlNode node in xNode.ChildNodes)
 					{
@@ -78,7 +89,15 @@ namespace Chain
 							throw new Exception("Некорректное содержимое файла");
 						}
 
-						Object Obj = node.Name == "Joint" ? new Joint() : (Object)new Segment();
+                        
+
+                        if (ProxyChainList.Count>0 && (ProxyChainList.Last().GetType().Name == node.Name) )//  
+                        {
+                            throw new Exception("Некорректное содержимое файла.");
+                        }
+
+
+                        Object Obj = node.Name == "Joint" ? new Joint() : (Object)new Segment();
 
 						var myClassType = Obj.GetType();
 						var properties = myClassType.GetProperties();
@@ -112,9 +131,15 @@ namespace Chain
 							}
 						}
 
-						ChainList.Add(Obj);
+                        ProxyChainList.Add(Obj);
 					}
-				}
+
+                    Delete(0);
+
+
+                    ChainList1 = ProxyChainList;
+
+                }
 				catch (Exception e)
 				{
 					MessageBox.Show(e.Message, "Ошибка при загрузке фафла");
@@ -122,7 +147,10 @@ namespace Chain
 			}
 		}
 
-		public void Save(List<Object> ChainList) //в файл
+
+        
+
+            public void Save(List<Object> ChainList) //в файл
 		{
 			var xdoc = new XDocument(); //создаём документ
 
@@ -149,11 +177,15 @@ namespace Chain
 
 					foreach (PropertyInfo property in properties)
 					{
-						if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
-						{
-							var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
-							Element.Add(Attrib);
-						}
+                        if (property.Name != "IsSelected")
+                        {
+                            if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
+						    {
+							    var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
+							    Element.Add(Attrib);
+						    }
+                        }
+						
 					}
 
 					FirstElement.Add(Element);
