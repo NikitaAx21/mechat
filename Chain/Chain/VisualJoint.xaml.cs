@@ -8,7 +8,7 @@ namespace Chain
 	/// <summary>
 	/// Логика взаимодействия для VisualJoint.xaml
 	/// </summary>
-	public partial class VisualJoint : UserControl
+	public partial class VisualJoint : VisualObject
 	{
 		public VisualJoint(Joint parent)
 		{
@@ -23,8 +23,6 @@ namespace Chain
 			Margin = new Thickness(halfWidth, halfHeight, halfWidth, halfHeight);
 		}
 
-		public Joint ParentObject { get; set; }
-
 		public void PutOnCenter()
 		{
 			var canvas = VisualParent as Canvas;
@@ -36,11 +34,11 @@ namespace Chain
 			SetPosition(halfHeight, halfWidth);
 		}
 
-		public event Action OnSelectedChanged;
+		public override event Action<VisualObject> OnSelectedChanged;
 
 		private void OnSelected(object sender, MouseButtonEventArgs e)
 		{
-			OnSelectedChanged?.Invoke();
+			OnSelectedChanged?.Invoke(this);
 		}
 	}
 }

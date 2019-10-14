@@ -38,10 +38,10 @@ namespace Chain
 			set
 			{
 				if (_selectedObject != null)
-					_selectedObject.IsSelected = false;
+					_selectedObject.Visual.IsSelected = false;
 				_selectedObject = value;
 				if (_selectedObject != null)
-					_selectedObject.IsSelected = true;
+					_selectedObject.Visual.IsSelected = true;
 				IsPanelVisible = value != null;
 				NotifyPropertyChanged(() => SelectedObject);
 				NotifyPropertyChanged(() => SelectedSegment);

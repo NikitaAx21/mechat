@@ -31,68 +31,44 @@ namespace Chain
 			LManager.Save(ChainList);
 		}
 
-		private void LoadList(object sender, RoutedEventArgs e) //==??==
+		private void LoadList(object sender, RoutedEventArgs e)
 		{
 			foreach (var o in ChainList)
 			{
-				switch (o)
-				{
-					case Joint a:
-						Canvas.Children.Remove(a.Visual);
-						break;
-
-					case Segment b:
-						Canvas.Children.Remove(b.Visual);
-						break;
-				}
+				Canvas.Children.Remove(o.Visual);
 			}
 
-			LManager.Delete(0);
+			//LManager.Delete(0);
 
-			LManager.Load(ChainList);
+			LManager.Load(ChainList, out ChainList);
 
 			//==============================
 
 			foreach (var o in ChainList)
 			{
-				switch (o)
-				{
-					case Joint joint:
-						Canvas.Children.Add(joint.Visual);
-						break;
-
-					case Segment segment:
-						Canvas.Children.Add(segment.Visual);
-						break;
-				}
+				Canvas.Children.Add(o.Visual);
 			}
 
-			Panel.SelectedObject = ChainList.LastOrDefault();
+			Panel.SelectedObject = ChainList.FirstOrDefault();
 
 			//if (ChainList.Count == 1)//?
-			//CenterCircleSetPosition();
+			CenterCircleSetPosition();
 		}
 
 		private void CenterCircleSetPosition(object sender = null, RoutedEventArgs e = null)
 		{
 			if (ChainList.FirstOrDefault() is Joint joint)
-				joint.Visual.PutOnCenter();
+			{
+				var visualJoint = joint.Visual as VisualJoint;
+				visualJoint?.PutOnCenter();
+			}
 		}
 
 		private void DeleteObject(object sender, RoutedEventArgs e)
 		{
 			foreach (var o in ChainList.Where(o => o.Id >= Panel.SelectedObject.Id))
 			{
-				switch (o)
-				{
-					case Joint a:
-						Canvas.Children.Remove(a.Visual);
-						break;
-
-					case Segment b:
-						Canvas.Children.Remove(b.Visual);
-						break;
-				}
+				Canvas.Children.Remove(o.Visual);
 			}
 
 			LManager.Delete(Panel.SelectedObject.Id);
@@ -103,17 +79,7 @@ namespace Chain
 		{
 			LManager.Add();
 			var obj = ChainList.Last();
-
-			switch (obj)
-			{
-				case Joint joint:
-					Canvas.Children.Add(joint.Visual);
-					break;
-
-				case Segment segment:
-					Canvas.Children.Add(segment.Visual);
-					break;
-			}
+			Canvas.Children.Add(obj.Visual);
 
 			if (ChainList.Count == 1)
 				CenterCircleSetPosition();

@@ -27,13 +27,13 @@ namespace Chain
 			var obj = isNeedToCreateSegment ? (Object)new Segment() : new Joint();
 
 			obj.Id = _list.Count;
-			obj.OnSelectedChanged += Select;
+			obj.Visual.OnSelectedChanged += Select;
 			_list.Add(obj);
 		}
 
-		private void Select(Object obj)
+		private void Select(VisualObject obj)
 		{
-			_panel.SelectedObject = obj;
+			_panel.SelectedObject = obj.ParentObject;
 		}
 
 		public void Delete(int id)
@@ -43,8 +43,10 @@ namespace Chain
 
 		private string path = "";
 
-		public void Load(List<Object> ChainList) //из файла
+		public void Load(List<Object> ChainList, out List<Object> ChainList1) //из файла
 		{
+			ChainList1 = ChainList;
+
 			OpenFileDialog fileChoose = new OpenFileDialog();
 			if (fileChoose.ShowDialog() == true)
 			{
@@ -56,6 +58,8 @@ namespace Chain
 
 			if (!string.IsNullOrEmpty(path))
 			{
+				List<Object> ProxyChainList = new List<Object>();
+
 				var dataXml = new XmlDocument();
 				try
 				{
@@ -69,6 +73,12 @@ namespace Chain
 
 				var xRoot = dataXml.DocumentElement; //SourceData
 				var xNode = xRoot.FirstChild; //Object
+
+				if (xNode.ChildNodes[0].Name != "Joint") //  
+				{
+					throw new Exception("Некорректное содержимое файла.");
+				}
+
 				try
 				{
 					foreach (XmlNode node in xNode.ChildNodes)
@@ -76,6 +86,11 @@ namespace Chain
 						if ((node.Name != "Segment") && (node.Name != "Joint"))
 						{
 							throw new Exception("Некорректное содержимое файла");
+						}
+
+						if (ProxyChainList.Count > 0 && (ProxyChainList.Last().GetType().Name == node.Name)) //  
+						{
+							throw new Exception("Некорректное содержимое файла.");
 						}
 
 						Object Obj = node.Name == "Joint" ? new Joint() : (Object)new Segment();
@@ -112,8 +127,12 @@ namespace Chain
 							}
 						}
 
-						ChainList.Add(Obj);
+						ProxyChainList.Add(Obj);
 					}
+
+					Delete(0);
+
+					ChainList1 = ProxyChainList;
 				}
 				catch (Exception e)
 				{
@@ -149,10 +168,13 @@ namespace Chain
 
 					foreach (PropertyInfo property in properties)
 					{
-						if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
+						if (property.Name != "IsSelected")
 						{
-							var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
-							Element.Add(Attrib);
+							if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
+							{
+								var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
+								Element.Add(Attrib);
+							}
 						}
 					}
 

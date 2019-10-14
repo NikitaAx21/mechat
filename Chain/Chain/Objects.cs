@@ -10,18 +10,6 @@ namespace Chain
 		public int Id;
 		private bool _isMassCenterVisible;
 		private double _mass;
-		private bool _isSelected;
-		public virtual event Action<Object> OnSelectedChanged;
-
-		public bool IsSelected
-		{
-			get => _isSelected;
-			set
-			{
-				_isSelected = value;
-				NotifyPropertyChanged(() => IsSelected);
-			}
-		}
 
 		public bool IsMassCenterVisible
 		{
@@ -32,6 +20,8 @@ namespace Chain
 				NotifyPropertyChanged(() => IsMassCenterVisible);
 			}
 		}
+
+		public VisualObject Visual { get; set; }
 
 		public double Mass
 		{
@@ -100,19 +90,9 @@ namespace Chain
 			}
 		}
 
-		public VisualSegment Visual { get; set; }
-
-		public override event Action<Object> OnSelectedChanged;
-
-		private void RaiseSelectedChanged()
-		{
-			OnSelectedChanged?.Invoke(this);
-		}
-
 		public Segment()
 		{
 			Visual = new VisualSegment(this);
-			Visual.OnSelectedChanged += RaiseSelectedChanged;
 
 			Vector.X = 0;
 			Vector.Y = 2;
@@ -175,19 +155,9 @@ namespace Chain
 				NotifyPropertyChanged(() => AngleRestrictionRight);
 			}
 		}
-
-		public VisualJoint Visual { get; set; }
-		public override event Action<Object> OnSelectedChanged;
-
-		private void RaiseSelectedChanged()
-		{
-			OnSelectedChanged?.Invoke(this);
-		}
-
 		public Joint()
 		{
 			Visual = new VisualJoint(this);
-			Visual.OnSelectedChanged += RaiseSelectedChanged;
 			CurrentAngle = 0;
 
 			IsAngleRestricted = false;
