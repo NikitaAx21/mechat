@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System;
 using Microsoft.Win32;
 using System.Xml;
@@ -12,23 +11,31 @@ namespace Chain
 {
 	public class ListManager
 	{
-		public ListManager(List<Object> list, Panel panel)
+		public ListManager(Panel panel)
 		{
-			_list = list;
+			ChainList = new List<Object>();
+
 			_panel = panel;
 		}
 
-		private readonly List<Object> _list;
+		public List<Object> ChainList;
 		private readonly Panel _panel;
 
-		public void Add()
+		public void Add(Object objec = null)
 		{
-			var isNeedToCreateSegment = _list.Count != 0 && _list.Last() is Joint;
-			var obj = isNeedToCreateSegment ? (Object)new Segment() : new Joint();
+			Object obj;
+			if (objec != null)
+				obj = objec;
 
-			obj.Id = _list.Count;
+			else
+			{
+				var isNeedToCreateSegment = ChainList.Count != 0 && ChainList.Last() is Joint;
+				obj = isNeedToCreateSegment ? (Object)new Segment() : new Joint();
+			}
+
+			obj.Id = ChainList.Count;
 			obj.Visual.OnSelectedChanged += Select;
-			_list.Add(obj);
+			ChainList.Add(obj);
 		}
 
 		private void Select(VisualObject obj)
@@ -38,147 +45,186 @@ namespace Chain
 
 		public void Delete(int id)
 		{
-			_list.RemoveAll(o => o.Id >= id);
+			foreach (var o in ChainList)
+			{
+				if (o.Id < id)
+					continue;
+
+				o.Visual.OnSelectedChanged -= Select;
+				ChainList.Remove(o);
+			}
 		}
 
-		private string path = "";
+		private string _path = "";
 
-		public void Load(List<Object> ChainList, out List<Object> ChainList1) //из файла
+		public void Load() //из файла
 		{
-			ChainList1 = ChainList;
-
-			OpenFileDialog fileChoose = new OpenFileDialog();
+			var fileChoose = new OpenFileDialog();
 			if (fileChoose.ShowDialog() == true)
 			{
 				if (fileChoose.FileName.Split('.')[fileChoose.FileName.Split('.').Length - 1].ToLower() == "xml")
-					path = fileChoose.FileName;
+					_path = fileChoose.FileName;
 				else
-					MessageBox.Show("Выберите файл с расширением \".xml\"."); //
+					MessageBox.Show("Выберите файл с расширением \".xml\".");
 			}
-
-			if (!string.IsNullOrEmpty(path))
+			else
 			{
-				List<Object> ProxyChainList = new List<Object>();
-
-				var dataXml = new XmlDocument();
-				try
-				{
-					dataXml.Load(path);
-				}
-				catch
-				{
-					MessageBox.Show("Не удалось загрузить файл.");
-					return;
-				}
-
-				var xRoot = dataXml.DocumentElement; //SourceData
-				var xNode = xRoot.FirstChild; //Object
-
-				if (xNode.ChildNodes[0].Name != "Joint") //  
-				{
-					throw new Exception("Некорректное содержимое файла.");
-				}
-
-				try
-				{
-					foreach (XmlNode node in xNode.ChildNodes)
-					{
-						if ((node.Name != "Segment") && (node.Name != "Joint"))
-						{
-							throw new Exception("Некорректное содержимое файла");
-						}
-
-						if (ProxyChainList.Count > 0 && (ProxyChainList.Last().GetType().Name == node.Name)) //  
-						{
-							throw new Exception("Некорректное содержимое файла.");
-						}
-
-						Object Obj = node.Name == "Joint" ? new Joint() : (Object)new Segment();
-
-						var myClassType = Obj.GetType();
-						var properties = myClassType.GetProperties();
-
-						foreach (var property in properties)
-						{
-							foreach (XmlNode attribut in node.Attributes)
-							{
-								if (property.Name == attribut.Name)
-								{
-									var value_type = property.PropertyType.Name;
-									switch (value_type)
-									{
-										case "Double":
-											var attr1 = double.Parse(attribut.Value, CultureInfo.InvariantCulture);
-											property.SetValue(Obj, attr1);
-											break;
-
-										case "Boolean":
-											var attr2 = bool.Parse(attribut.Value);
-											property.SetValue(Obj, attr2);
-											break;
-
-										default:
-
-											break; //???
-									}
-
-									break;
-								}
-							}
-						}
-
-						ProxyChainList.Add(Obj);
-					}
-
-					Delete(0);
-
-					ChainList1 = ProxyChainList;
-				}
-				catch (Exception e)
-				{
-					MessageBox.Show(e.Message, "Ошибка при загрузке фафла");
-				}
+				return;
 			}
-		}
 
-		public void Save(List<Object> ChainList) //в файл
-		{
-			var xdoc = new XDocument(); //создаём документ
+			if (string.IsNullOrEmpty(_path))
+				return;
 
-			var FirstElement = new XElement("Objects"); // создаем первый элемент
+			var proxyChainList = new List<Object>();
+
+			var dataXml = new XmlDocument();
+			try
+			{
+				dataXml.Load(_path);
+			}
+			catch
+			{
+				MessageBox.Show("Не удалось загрузить файл.");
+				return;
+			}
+
+			var xRoot = dataXml.DocumentElement;
+			if (xRoot == null)
+				return;
+
+			var xNode = xRoot.FirstChild;
+
+			if (xNode.ChildNodes[0].Name != "Joint")
+			{
+				throw new Exception("Некорректное содержимое файла.");
+			}
 
 			try
 			{
-				foreach (Object element in ChainList)
+				foreach (XmlNode node in xNode.ChildNodes)
 				{
-					Object Obj;
-
-					Obj = element as Joint;
-					string tag = "Joint";
-					if (Obj == null)
+					if ((node.Name != "Segment") && (node.Name != "Joint"))
 					{
-						Obj = element as Segment;
+						throw new Exception("Некорректное содержимое файла");
+					}
+
+					if (proxyChainList.Count > 0 && (proxyChainList.Last().GetType().Name == node.Name))
+					{
+						throw new Exception("Некорректное содержимое файла.");
+					}
+
+					var obj = node.Name == "Joint" ? new Joint() : (Object)new Segment();
+
+					var myClassType = obj.GetType();
+					var properties = myClassType.GetProperties();
+
+					foreach (var property in properties)
+					{
+						if (node.Attributes == null)
+							continue;
+
+						foreach (XmlNode attribut in node.Attributes)
+						{
+							if (property.Name != attribut.Name)
+								continue;
+
+							var valueType = property.PropertyType.Name;
+							switch (valueType)
+							{
+								case "Double":
+									var attr1 = double.Parse(attribut.Value, CultureInfo.InvariantCulture);
+									property.SetValue(obj, attr1);
+									break;
+
+								case "Boolean":
+									var attr2 = bool.Parse(attribut.Value);
+									property.SetValue(obj, attr2);
+									break;
+
+								default:
+
+									break; //???
+							}
+
+							break;
+						}
+					}
+
+					if (node.Name == "Joint")
+					{
+						if (!(obj is Joint joi))
+							continue;
+
+						if (joi.IsAngleRestricted &&
+							!(joi.AngleRestrictionLeft < joi.CurrentAngle &&
+							  joi.CurrentAngle < joi.AngleRestrictionRight &&
+							  joi.AngleRestrictionLeft < joi.AngleRestrictionRight))
+						{
+							throw new Exception("Некорректное содержимое файла. Не верные параметры углов.");
+						}
+					}
+
+					proxyChainList.Add(obj);
+				}
+
+				Delete(0);
+
+				foreach (var element in proxyChainList)
+				{
+					Add(element);
+				}
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message, "Ошибка при загрузке фафла");
+			}
+		}
+
+		public void Save() //в файл
+		{
+			var dlg = new SaveFileDialog
+			{
+				FileName = "SourceData",
+				DefaultExt = ".text",
+				Filter = "Text documents (.xml)|*.xml"
+			};
+
+			// Show save file dialog box
+			var result = dlg.ShowDialog();
+			if (result != true)
+				return;
+
+			var xdoc = new XDocument(); //создаём документ
+
+			var firstElement = new XElement("Objects"); // создаем первый элемент
+
+			try
+			{
+				foreach (var element in ChainList)
+				{
+					Object obj = element as Joint;
+					var tag = "Joint";
+					if (obj == null)
+					{
+						obj = element as Segment;
 						tag = "Segment";
 					}
 
 					var Element = new XElement(tag);
 
-					var myClassType = Obj.GetType();
+					var myClassType = obj.GetType();
 					var properties = myClassType.GetProperties();
 
-					foreach (PropertyInfo property in properties)
+					foreach (var property in properties)
 					{
-						if (property.Name != "IsSelected")
-						{
-							if (property.PropertyType.Name == "Boolean" || property.PropertyType.Name == "Double")
-							{
-								var Attrib = new XAttribute(property.Name, property.GetValue(Obj, null));
-								Element.Add(Attrib);
-							}
-						}
+						if (property.PropertyType.Name != "Boolean" && property.PropertyType.Name != "Double")
+							continue;
+
+						var attrib = new XAttribute(property.Name, property.GetValue(obj, null));
+						Element.Add(attrib);
 					}
 
-					FirstElement.Add(Element);
+					firstElement.Add(Element);
 				}
 			}
 			catch
@@ -187,17 +233,22 @@ namespace Chain
 			}
 
 			// создаем корневой элемент
-			XElement SourceData = new XElement("SourceData");
+			var sourceData = new XElement("SourceData");
 
 			// добавляем в корневой элемент
-			SourceData.Add(FirstElement);
+			sourceData.Add(firstElement);
 
 			// добавляем корневой элемент в документ
-			xdoc.Add(SourceData);
+			xdoc.Add(sourceData);
+
 			try
 			{
-				//сохраняем документ
-				xdoc.Save("SourceData.xml");
+				// Save document
+				var filename = dlg.FileName;
+				using (var file = new System.IO.StreamWriter(filename, false))
+				{
+					file.WriteLine(xdoc);
+				}
 			}
 			catch
 			{
