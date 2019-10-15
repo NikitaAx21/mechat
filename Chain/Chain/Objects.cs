@@ -11,6 +11,13 @@ namespace Chain
 		private bool _isMassCenterVisible;
 		private double _mass;
 
+		protected Object()
+		{
+			IsMassCenterVisible = false;
+			Mass = 10;
+			Id = 0;
+		}
+
 		public bool IsMassCenterVisible
 		{
 			get => _isMassCenterVisible;
@@ -30,16 +37,16 @@ namespace Chain
 			{
 				_mass = value;
 				NotifyPropertyChanged(() => Mass);
+				OnObjectChanged();
 			}
 		}
 
-		protected Object()
+		protected void OnObjectChanged()
 		{
-			IsMassCenterVisible = false;
-			Mass = 10;
-			Id = 0;
+			ObjectChanged?.Invoke(this);
 		}
 
+		public event Action<Object> ObjectChanged;
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public void NotifyPropertyChanged<T>(Expression<Func<T>> property)
@@ -55,6 +62,23 @@ namespace Chain
 
 	public class Segment : Object
 	{
+		public Point Vector; //пересчёт из длины и угла предыдущего сустава
+		private double _length;
+		private bool _visibility;
+		private bool _efemerik;
+
+		public Segment()
+		{
+			Visual = new VisualSegment(this);
+
+			Vector.X = 0;
+			Vector.Y = 2;
+			Length = 20;
+
+			Visibility = true;
+			Efemerik = false;
+		}
+
 		public double Length
 		{
 			get => _length;
@@ -62,13 +86,9 @@ namespace Chain
 			{
 				_length = value;
 				NotifyPropertyChanged(() => Length);
+				OnObjectChanged();
 			}
 		}
-
-		public Point Vector; //пересчёт из длины и угла предыдущего сустава
-		private double _length;
-		private bool _visibility;
-		private bool _efemerik;
 
 		public bool Visibility
 		{
@@ -90,17 +110,7 @@ namespace Chain
 			}
 		}
 
-		public Segment()
-		{
-			Visual = new VisualSegment(this);
-
-			Vector.X = 0;
-			Vector.Y = 2;
-			Length = 20;
-
-			Visibility = true;
-			Efemerik = false;
-		}
+		//public override event Action<Object> ObjectChanged;
 	}
 
 	public class Joint : Object
@@ -110,6 +120,14 @@ namespace Chain
 		private double _currentAngle;
 		private bool _isAngleRestricted;
 
+		public Joint()
+		{
+			Visual = new VisualJoint(this);
+
+			CurrentAngle = 0;
+			IsAngleRestricted = false;
+		}
+
 		public double CurrentAngle
 		{
 			get => _currentAngle;
@@ -117,6 +135,7 @@ namespace Chain
 			{
 				_currentAngle = value;
 				NotifyPropertyChanged(() => CurrentAngle);
+				OnObjectChanged();
 			}
 		}
 
@@ -154,16 +173,6 @@ namespace Chain
 				_angleRestrictionRight = value;
 				NotifyPropertyChanged(() => AngleRestrictionRight);
 			}
-		}
-		public Joint()
-		{
-			Visual = new VisualJoint(this);
-			CurrentAngle = 0;
-
-			IsAngleRestricted = false;
-
-			AngleRestrictionLeft = -180;
-			AngleRestrictionRight = 180;
 		}
 	}
 }

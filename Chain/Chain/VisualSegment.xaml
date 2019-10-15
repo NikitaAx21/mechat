@@ -15,7 +15,7 @@
 			<Setter Property="Stretch"
 					Value="Fill" />
 			<Setter Property="Width"
-					Value="{Binding ParentObject.Length}" />
+					Value="{Binding GraphicalLength}" />
 			<Setter Property="Height"
 					Value="{Binding Height}" />
 			<Setter Property="RadiusX"
