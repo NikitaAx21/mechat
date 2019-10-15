@@ -58,11 +58,12 @@ namespace Chain
 
 		private string path = "";
 
-		public void Load(List<Object> ChainList, out List<Object> ChainList1) //из файла
+		public void Load(/*List<Object> ChainList, out List<Object> ChainList1*/) //из файла
 		{
-			ChainList1 = ChainList;
+            //ChainList1 = ChainList;
+            //ChainList;
 
-			OpenFileDialog fileChoose = new OpenFileDialog();
+            OpenFileDialog fileChoose = new OpenFileDialog();
 			if (fileChoose.ShowDialog() == true)
 			{
 				if (fileChoose.FileName.Split('.')[fileChoose.FileName.Split('.').Length - 1].ToLower() == "xml")
@@ -145,7 +146,7 @@ namespace Chain
                         if (node.Name == "Joint")
                         {
                             Joint Joi = Obj as Joint;
-                            if (Joi.IsAngleRestricted && Joi.AngleRestrictionLeft < Joi.CurrentAngle && Joi.CurrentAngle < Joi.AngleRestrictionRight)
+                            if (Joi.IsAngleRestricted && !(Joi.AngleRestrictionLeft < Joi.CurrentAngle && Joi.CurrentAngle < Joi.AngleRestrictionRight && Joi.AngleRestrictionLeft < Joi.AngleRestrictionRight))//
                             {
                                 throw new Exception("Некорректное содержимое файла. Не верные параметры углов.");
                             }
@@ -163,7 +164,7 @@ namespace Chain
                         Add(element);
                     }
 
-                    ChainList1 = ProxyChainList;
+                    //ChainList1 = ProxyChainList;
 				}
 				catch (Exception e)
 				{
@@ -172,11 +173,24 @@ namespace Chain
 			}
 		}
 
-		public void Save(List<Object> ChainList) //в файл
+		public void Save() //в файл
 		{
-			var xdoc = new XDocument(); //создаём документ
 
-			var FirstElement = new XElement("Objects"); // создаем первый элемент
+
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "SourceData"; // Default file name
+            dlg.DefaultExt = ".text"; // Default file extension//?
+            dlg.Filter = "Text documents (.xml)|*.xml"; // Filter files by extension
+
+            // Show save file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+            if (result == true)
+            { 
+                //============================================================================================================================================
+
+                var xdoc = new XDocument(); //создаём документ
+
+			    var FirstElement = new XElement("Objects"); // создаем первый элемент
 
 			try
 			{
@@ -224,15 +238,41 @@ namespace Chain
 
 			// добавляем корневой элемент в документ
 			xdoc.Add(SourceData);
-			try
-			{
-				//сохраняем документ
-				xdoc.Save("SourceData.xml");
-			}
-			catch
-			{
-				MessageBox.Show("Не удалось сохранить/перезаписать файл."); //
-			}
+
+
+                try
+                {
+                    // Save document
+                    string filename = dlg.FileName;
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(filename, false))
+                    {
+                        file.WriteLine(xdoc);
+
+                    }
+                    ////сохраняем документ
+                    //xdoc.Save("SourceData.xml");
+                    ////xdoc.
+
+                }
+                catch
+                {
+                    MessageBox.Show("Не удалось сохранить/перезаписать файл."); //
+                }
+
+            }
+            //====================================================================================================================
+
+			//try
+			//{
+			//	//сохраняем документ
+			//	xdoc.Save("SourceData.xml") ;
+   //             //xdoc.
+
+   //         }
+			//catch
+			//{
+			//	MessageBox.Show("Не удалось сохранить/перезаписать файл."); //
+			//}
 		}
 	}
 }

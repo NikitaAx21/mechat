@@ -28,7 +28,7 @@ namespace Chain
 
 		private void SaveList(object sender, RoutedEventArgs e)
 		{
-			LManager.Save(LManager.ChainList);
+			LManager.Save();
 		}
 
 		private void LoadList(object sender, RoutedEventArgs e)
@@ -40,7 +40,7 @@ namespace Chain
 
 			//LManager.Delete(0);
 
-			LManager.Load(LManager.ChainList, out LManager.ChainList);
+			LManager.Load(/*LManager.ChainList, out LManager.ChainList*/);//
 
 			//==============================
 
