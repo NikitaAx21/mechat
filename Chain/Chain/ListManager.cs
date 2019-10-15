@@ -62,7 +62,7 @@ namespace Chain
 			}
 			else
 			{
-				return
+				return;
 			}
 
 			if (string.IsNullOrEmpty(_path))
