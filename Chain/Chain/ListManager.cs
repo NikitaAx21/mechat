@@ -45,14 +45,7 @@ namespace Chain
 
 		public void Delete(int id)
 		{
-			foreach (var o in ChainList)
-			{
-				if (o.Id < id)
-					continue;
-
-				o.Visual.OnSelectedChanged -= Select;
-				ChainList.Remove(o);
-			}
+			ChainList.RemoveAll(o => o.Id >= id);
 		}
 
 		private string _path = "";
@@ -69,7 +62,7 @@ namespace Chain
 			}
 			else
 			{
-				return;
+				return
 			}
 
 			if (string.IsNullOrEmpty(_path))
