@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 
 namespace Chain
@@ -23,7 +22,6 @@ namespace Chain
 			Canvas.Children.Add(center.Visual);
 		}
 
-		//public List<Object> ChainList = new List<Object>();
 		public ListManager LManager;
 
 		private void SaveList(object sender, RoutedEventArgs e)
@@ -38,11 +36,7 @@ namespace Chain
 				Canvas.Children.Remove(o.Visual);
 			}
 
-			//LManager.Delete(0);
-
-			LManager.Load(/*LManager.ChainList, out LManager.ChainList*/);//
-
-			//==============================
+			LManager.Load();
 
 			foreach (var o in LManager.ChainList)
 			{
@@ -51,7 +45,6 @@ namespace Chain
 
 			Panel.SelectedObject = LManager.ChainList.FirstOrDefault();
 
-			//if (ChainList.Count == 1)//?
 			CenterCircleSetPosition();
 		}
 
@@ -75,7 +68,7 @@ namespace Chain
 			Panel.SelectedObject = LManager.ChainList.LastOrDefault();
 		}
 
-		private void AddObject(object sender, RoutedEventArgs e)//=====
+		private void AddObject(object sender, RoutedEventArgs e)
 		{
 			LManager.Add();
 			var obj = LManager.ChainList.Last();
