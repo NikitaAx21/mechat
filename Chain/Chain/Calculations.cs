@@ -10,7 +10,7 @@ namespace Chain
 		private double _dY;
 		public double[,] matr = new double[3, 3];
 		public double[] vect = new double[3];
-		public static List<Point> CoordMas = new List<Point>();
+        public static List<Point> CoordMas = new List<Point>();
 
 		/// <summary>
 		/// Метод для вычисления координат в Лаб.С.К.
@@ -41,27 +41,21 @@ namespace Chain
 					}
 					else
 					{
-						var S = list[i - 1] as Segment;
-
-						coordX += S.Vector.X * list[i].Mass;
-						coordY += S.Vector.Y * list[i].Mass;
+						coordX += Calculations.CoordMas[i].X * list[i].Mass;
+						coordY += Calculations.CoordMas[i].Y * list[i].Mass;
 					}
 				}
 				else
 				{
-					var s = list[i] as Segment;
-
 					if (i == 1)
 					{
-						coordX += (s.Vector.X + defaultX) / 2 * list[i].Mass; //---
-						coordY += (s.Vector.Y + defaultY) / 2 * list[i].Mass; //---
+						coordX += (Calculations.CoordMas[i].X + defaultX) / 2 * list[i].Mass; //---
+						coordY += (Calculations.CoordMas[i].Y + defaultY) / 2 * list[i].Mass; //---
 					}
 					else
 					{
-						var S0 = list[i - 2] as Segment;
-
-						coordX += (s.Vector.X + S0.Vector.X) / 2 * list[i].Mass;
-						coordY += (s.Vector.Y + S0.Vector.Y) / 2 * list[i].Mass;
+						coordX += (Calculations.CoordMas[i].X + Calculations.CoordMas[i-2].X) / 2 * list[i].Mass;
+						coordY += (Calculations.CoordMas[i].Y + Calculations.CoordMas[i-2].Y) / 2 * list[i].Mass;
 					}
 				}
 			}
@@ -97,10 +91,10 @@ namespace Chain
 			return r >= 0 && r <= 1 && s >= 0 && s <= 1;
 		}
 
-		public static List<Point> GetInetersectionElements(List<Object> ChainList)
+		public static int[] GetInetersectionElements(List<Object> ChainList)
 		{
-			List<Point> mas = new List<Point>();
-			Point SegmentsNumbers = new Point(0, 0);
+			int[] mas = new int[100];
+            int k = 0;
 			for (int i = 2; i < ChainList.Count - 1; i += 2)
 			{
 				for (int j = i + 4; j < ChainList.Count; j += 2)
@@ -111,9 +105,9 @@ namespace Chain
 					Point d = Calculations.CoordMas[j - 2];
 					if (IsIntersected(a, b, c, d))
 					{
-						SegmentsNumbers.X = i - 1;
-						SegmentsNumbers.Y = j - 1;
-						mas.Add(SegmentsNumbers);
+                        mas[k] = i - 1;
+                        mas[k + 1] = j - 1;
+                        k += 2;
 					}
 				}
 			}
@@ -132,8 +126,14 @@ namespace Chain
 			};
 			tM.X = res.X;
 			tM.Y = res.Y;
+            if (CoordMas.Count == 0)
+            {
+                Point p = new Point(0,0);
+                CoordMas.Add(p);
+            }
 			CoordMas.Add(res);
-			return res;
+            CoordMas.Add(res);
+            return res;
 		}
 	}
 
@@ -156,22 +156,6 @@ namespace Chain
 			TransMatrix[2, 1] = 0;
 			TransMatrix[2, 2] = 1;
 		}
-
-		//Матрица для нахождения координат. Пока закомментил
-		/*public TransformationMatrix(double angle)
-		{
-			_curAngle += angle;
-			var rad = Calculations.DegreeToRadian(_curAngle);
-			TransMatrix[0, 0] = Math.Cos(rad);
-			TransMatrix[0, 1] = Math.Sin(rad);
-			TransMatrix[0, 2] = X;
-			TransMatrix[1, 0] = -Math.Sin(rad);
-			TransMatrix[1, 1] = Math.Cos(rad);
-			TransMatrix[1, 2] = Y;
-			TransMatrix[2, 0] = 0;
-			TransMatrix[2, 1] = 0;
-			TransMatrix[2, 2] = 1;
-		}*/
 
 		//Матрица для поворота системы на угол "angle" начиная с элемента №"num" в коллекции ChainList
 		public TransformationMatrix(double angle, List<Object> ChainList, int num = 0)
@@ -221,25 +205,6 @@ namespace Chain
 			Vector[0] = s.Length * Math.Sin(Calculations.DegreeToRadian(j.CurrentAngle));
 			Vector[1] = s.Length * Math.Cos(Calculations.DegreeToRadian(j.CurrentAngle));
 			Vector[2] = 1;
-		}
-	}
-
-	public class RotateMatrix
-	{
-		public double[,] Matrix = new double[3, 3];
-
-		public RotateMatrix(double angle)
-		{
-			var rad = Calculations.DegreeToRadian(angle);
-			Matrix[0, 0] = Math.Cos(rad);
-			Matrix[0, 1] = Math.Sin(rad);
-			Matrix[0, 2] = 0;
-			Matrix[1, 0] = -Math.Sin(rad);
-			Matrix[1, 1] = Math.Cos(rad);
-			Matrix[1, 2] = 0;
-			Matrix[2, 0] = 0;
-			Matrix[2, 1] = 0;
-			Matrix[2, 2] = 1;
 		}
 	}
 }
