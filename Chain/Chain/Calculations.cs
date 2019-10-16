@@ -130,11 +130,7 @@ namespace Chain
 			};
 			tM.X = res.X;
 			tM.Y = res.Y;
-            if (CoordMas.Count == 0)
-            {
-                Point p = new Point(0,0);
-                CoordMas.Add(p);
-            }
+            
 			CoordMas.Add(res);
             CoordMas.Add(res);
             return res;

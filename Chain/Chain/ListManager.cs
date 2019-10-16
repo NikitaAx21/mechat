@@ -24,7 +24,12 @@ namespace Chain
 
 		public void Add(Object objec = null)
 		{
-			Object obj;
+            if (Calculations.CoordMas.Count == 0)
+            {
+                Point p = new Point(0,0);
+                Calculations.CoordMas.Add(p);
+            }
+            Object obj;
 			if (objec != null)
 				obj = objec;
 
@@ -259,13 +264,31 @@ namespace Chain
                         TransformationMatrix tM = new TransformationMatrix(a, ChainList, i);
                         CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
                         s.Vector = Calculations.GetCoord(tM, cM);
+                        ChainList[i] = s;
                     }
                 }
             }
-            /*if (obj is Segment)
+            if (obj is Segment)
             {
-
-            }*/
+                var ns = obj as Segment;
+                var j = ChainList[obj.Id - 1] as Joint;
+                var s = ChainList[obj.Id] as Segment;
+                Point dR = new Point();
+                TransformationMatrix tM = new TransformationMatrix(j.CurrentAngle, ChainList, obj.Id);
+                CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
+                dR = Calculations.GetCoord(tM, cM);
+                s.Vector = dR;
+                ChainList[obj.Id] = s;
+                double dX = dR.X - s.Vector.X;
+                double dY = dR.Y - s.Vector.Y;
+                for (int i = obj.Id + 2; i < ChainList.Count; i += 2)
+                {
+                    var seg = ChainList[i] as Segment;
+                    seg.Vector.X += dX;
+                    seg.Vector.Y += dY;
+                    ChainList[i] = seg;
+                }  
+            }
 
 			for (var i = obj.Id; i < ChainList.Count; i++)
 			{
