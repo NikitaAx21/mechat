@@ -24,7 +24,7 @@ namespace Chain
 
 		public void Add(Object objec = null)
 		{
-            if (Calculations.CoordMas.Count == 0)
+            if ((Calculations.CoordMas.Count == 0) || (Calculations.CoordMas.Count == 1))
             {
                 Point p = new Point(0,0);
                 Calculations.CoordMas.Add(p);
