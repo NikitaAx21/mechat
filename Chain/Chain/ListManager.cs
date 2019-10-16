@@ -242,20 +242,11 @@ namespace Chain
 			{
 				MessageBox.Show("Не удалось сохранить/перезаписать файл."); //
 			}
-
 		}
 
 		private void ObjOnObjectChanged(Object obj)
 		{
-			var listForUpdate = new List<Object>();
-
-			foreach (var o in ChainList)
-			{
-				if (o.Id >= obj.Id)
-					listForUpdate.Add(o);
-			}
-            //воткнуть сюда
-            if (obj is Joint)
+			if (obj is Joint)
             {
                 var nj = obj as Joint;
                 double a = nj.CurrentAngle;
@@ -275,22 +266,32 @@ namespace Chain
             {
 
             }*/
-            
-			foreach (var o in listForUpdate)
+
+			for (var i = obj.Id; i < ChainList.Count; i++)
 			{
+				var o = ChainList[i];
 				if (o is Joint)
 				{
 					var visualJoint = o.Visual as VisualJoint;
-					var visualSegment = obj.Visual as VisualSegment;
-					if (visualSegment != null && visualJoint != null)
+					if (visualJoint == null)
+						continue;
+
+					if (i > 0)
+					{
+						var visualSegment = ChainList[i - 1].Visual as VisualSegment;
+						if (visualSegment != null)
 							visualJoint.Coordinate = visualSegment.End;
+					}
+					else
+						visualJoint.PutOnCenter();
 				}
+
 				if (o is Segment)
 				{
-					var visualJoint = o.Visual as VisualSegment;
-					var visualSegment = obj.Visual as VisualJoint;
+					var visualSegment = o.Visual as VisualSegment;
+					var visualJoint = ChainList[i - 1].Visual as VisualJoint;
 					if (visualSegment != null && visualJoint != null)
-						visualJoint.Begin = visualSegment.Coordinate;
+						visualSegment.Begin = visualJoint.Coordinate;
 				}
 			}
 		}

@@ -30,9 +30,9 @@ namespace Chain
 
 		public void SetPosition()
 		{
-			var halfWidth = Coordinate.Y - ActualWidth / 2;
-			var halfHeight = Coordinate.X - ActualHeight / 2;
-			Margin = new Thickness(halfWidth, halfHeight, halfWidth, halfHeight);
+			var x = Coordinate.X - 15.0 / 2;
+			var y = Coordinate.Y - 15.0 / 2;
+			Margin = new Thickness(x, y, x, y);
 		}
 
 		public void PutOnCenter()
@@ -41,9 +41,9 @@ namespace Chain
 			if (canvas == null)
 				return;
 
-			var halfWidth = canvas.ActualWidth / 2;
-			var halfHeight = canvas.ActualHeight / 2;
-			Coordinate = new Point(halfHeight, halfWidth);
+			var y = canvas.ActualHeight / 2;
+			var x = canvas.ActualWidth / 2;
+			Coordinate = new Point(x, y);
 		}
 
 		public override event Action<VisualObject> OnSelectedChanged;
