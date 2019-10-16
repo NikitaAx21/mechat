@@ -44,7 +44,7 @@ namespace Chain
 
 		private void SetPosition()
 		{
-			var halfHeight = Begin.Y - ActualHeight / 2;
+			var halfHeight = Begin.Y - 4.0;
 
 			var sinAngle = (End.Y - Begin.Y) / GraphicalLength;
 			var cosAngle = (End.X - Begin.X) / GraphicalLength;
@@ -57,10 +57,10 @@ namespace Chain
 				angle = 90 + Math.Asin(-cosAngle) * 180 / Math.PI;
 
 			if (End.X - Begin.X < 0 && End.Y - Begin.Y < 0)
-				angle = -90 + Math.Asin(sinAngle) * 180 / Math.PI;
+				angle = 180 - Math.Asin(sinAngle) * 180 / Math.PI;
 
-			Margin = new Thickness(Begin.X, halfHeight, Begin.X, halfHeight);
-			RenderTransform = new RotateTransform(angle, 0, ActualHeight / 2);
+			Margin = new Thickness(Begin.X, halfHeight, 0, 0);
+			RenderTransform = new RotateTransform(angle, 0, 4.0);
 
 			NotifyPropertyChanged(() => GraphicalLength);
 		}

@@ -74,9 +74,7 @@ namespace Chain
 			LManager.Add();
 			var obj = LManager.ChainList.Last();
 			Canvas.Children.Add(obj.Visual);
-
-			if (LManager.ChainList.Count == 1)
-				CenterCircleSetPosition();
+			obj.OnObjectChanged();
 		}
 	}
 }
