@@ -77,6 +77,10 @@ namespace Chain
 			return Math.PI * A / 180.0;
 		}
 
+        public static int GetScale()
+        {
+            return 1;
+        }
 		public static bool IsIntersected(Point a, Point b, Point c, Point d)
 		{
 			var common = (b.X - a.X) * (d.Y - c.Y) - (b.Y - a.Y) * (d.X - c.X);

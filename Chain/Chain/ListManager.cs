@@ -254,7 +254,28 @@ namespace Chain
 				if (o.Id >= obj.Id)
 					listForUpdate.Add(o);
 			}
+            //воткнуть сюда
+            if (obj is Joint)
+            {
+                var nj = obj as Joint;
+                double a = nj.CurrentAngle;
+                for (int i = obj.Id + 1; i < ChainList.Count; i += 2)
+                {
+                    if (ChainList[i] is Segment)
+                    {
+                        var s = ChainList[i] as Segment;
+                        var j = ChainList[i - 1] as Joint;
+                        TransformationMatrix tM = new TransformationMatrix(a, ChainList, i);
+                        CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
+                        s.Vector = Calculations.GetCoord(tM, cM);
+                    }
+                }
+            }
+            /*if (obj is Segment)
+            {
 
+            }*/
+            
 			foreach (var o in listForUpdate)
 			{
 				if (o is Joint)
