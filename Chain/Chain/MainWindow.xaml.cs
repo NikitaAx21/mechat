@@ -54,6 +54,7 @@ namespace Chain
 			{
 				var visualJoint = joint.Visual as VisualJoint;
 				visualJoint?.PutOnCenter();
+				joint.OnObjectChanged();
 			}
 		}
 

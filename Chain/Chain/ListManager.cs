@@ -11,15 +11,16 @@ namespace Chain
 {
 	public class ListManager
 	{
+		public List<Object> ChainList;
+		private readonly Panel _panel;
+		private string _path = "";
+
 		public ListManager(Panel panel)
 		{
 			ChainList = new List<Object>();
 
 			_panel = panel;
 		}
-
-		public List<Object> ChainList;
-		private readonly Panel _panel;
 
 		public void Add(Object objec = null)
 		{
@@ -35,20 +36,14 @@ namespace Chain
 
 			obj.Id = ChainList.Count;
 			obj.Visual.OnSelectedChanged += Select;
+			obj.ObjectChanged += ObjOnObjectChanged;
 			ChainList.Add(obj);
-		}
-
-		private void Select(VisualObject obj)
-		{
-			_panel.SelectedObject = obj.ParentObject;
 		}
 
 		public void Delete(int id)
 		{
 			ChainList.RemoveAll(o => o.Id >= id);
 		}
-
-		private string _path = "";
 
 		public void Load() //из файла
 		{
@@ -247,6 +242,41 @@ namespace Chain
 			{
 				MessageBox.Show("Не удалось сохранить/перезаписать файл."); //
 			}
+
+		}
+
+		private void ObjOnObjectChanged(Object obj)
+		{
+			var listForUpdate = new List<Object>();
+
+			foreach (var o in ChainList)
+			{
+				if (o.Id >= obj.Id)
+					listForUpdate.Add(o);
+			}
+
+			foreach (var o in listForUpdate)
+			{
+				if (o is Joint)
+				{
+					var visualJoint = o.Visual as VisualJoint;
+					var visualSegment = obj.Visual as VisualSegment;
+					if (visualSegment != null && visualJoint != null)
+							visualJoint.Coordinate = visualSegment.End;
+				}
+				if (o is Segment)
+				{
+					var visualJoint = o.Visual as VisualSegment;
+					var visualSegment = obj.Visual as VisualJoint;
+					if (visualSegment != null && visualJoint != null)
+						visualJoint.Begin = visualSegment.Coordinate;
+				}
+			}
+		}
+
+		private void Select(VisualObject obj)
+		{
+			_panel.SelectedObject = obj.ParentObject;
 		}
 	}
 }

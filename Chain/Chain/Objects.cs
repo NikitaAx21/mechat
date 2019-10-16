@@ -41,7 +41,7 @@ namespace Chain
 			}
 		}
 
-		protected void OnObjectChanged()
+		public void OnObjectChanged()
 		{
 			ObjectChanged?.Invoke(this);
 		}
