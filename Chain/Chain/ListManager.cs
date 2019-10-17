@@ -263,8 +263,8 @@ namespace Chain
                         var j = ChainList[i - 1] as Joint;
                         TransformationMatrix tM = new TransformationMatrix(a, ChainList, i);
                         CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
-                        s.Vector = Calculations.GetCoord(tM, cM);
-                        ChainList[i] = s;
+                        var vs = ChainList[i].Visual as VisualSegment;
+                        vs.End = Calculations.GetCoord(tM, cM);
                     }
                 }
             }
@@ -273,20 +273,21 @@ namespace Chain
                 var ns = obj as Segment;
                 var j = ChainList[obj.Id - 1] as Joint;
                 var s = ChainList[obj.Id] as Segment;
+                var vs = ChainList[obj.Id].Visual as VisualSegment;
                 Point dR = new Point();
                 TransformationMatrix tM = new TransformationMatrix(j.CurrentAngle, ChainList, obj.Id);
                 CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
                 dR = Calculations.GetCoord(tM, cM);
-                s.Vector = dR;
+                vs.End = dR;
                 ChainList[obj.Id] = s;
-                double dX = dR.X - s.Vector.X;
-                double dY = dR.Y - s.Vector.Y;
+                double dX = dR.X - vs.End.X;
+                double dY = dR.Y - vs.End.Y;
                 for (int i = obj.Id + 2; i < ChainList.Count; i += 2)
                 {
-                    var seg = ChainList[i] as Segment;
-                    seg.Vector.X += dX;
-                    seg.Vector.Y += dY;
-                    ChainList[i] = seg;
+                    var vss = ChainList[i].Visual as VisualSegment;
+                    var x = vss.End.X + dX;
+                    var y = vss.End.Y + dY;
+                    vss.End = new Point(x,y);
                 }  
             }
 

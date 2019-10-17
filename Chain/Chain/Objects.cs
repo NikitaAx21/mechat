@@ -62,7 +62,6 @@ namespace Chain
 
 	public class Segment : Object
 	{
-		public Point Vector; //пересчёт из длины и угла предыдущего сустава
 		private double _length;
 		private bool _visibility;
 		private bool _efemerik;
@@ -71,8 +70,6 @@ namespace Chain
 		{
 			Visual = new VisualSegment(this);
 
-			Vector.X = 0;
-			Vector.Y = 2;
 			Length = 20;
 
 			Visibility = true;
