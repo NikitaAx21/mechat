@@ -248,9 +248,15 @@ namespace Chain
 				MessageBox.Show("Не удалось сохранить/перезаписать файл."); //
 			}
 		}
-
-		private void ObjOnObjectChanged(Object obj)
+        Point c = new Point() { X = 234, Y = 163 };
+        private void ObjOnObjectChanged(Object obj)
 		{
+            var cJ = ChainList[0].Visual as VisualJoint;
+            
+            c = Calculations.MinusPoint(cJ.Coordinate,c);
+            
+            Calculations.ChangeMas(c);
+            c = cJ.Coordinate;
             if (obj.Id != ChainList.Count - 1)
             {
                 if (obj is Joint)
@@ -347,8 +353,8 @@ namespace Chain
             }
 
 			for (var i = obj.Id; i < ChainList.Count; i++)
-			{
-				var o = ChainList[i];
+			{               
+                var o = ChainList[i];
 				if (o is Joint)
 				{
 					var visualJoint = o.Visual as VisualJoint;

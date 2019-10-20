@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Chain
 {
@@ -81,7 +83,28 @@ namespace Chain
         {
             return 1;
         }
-		public static bool IsIntersected(Point a, Point b, Point c, Point d)
+        public static Point AddPoint(Point a, Point b)
+        {
+            Point c = new Point();
+            c.X = a.X + b.X;
+            c.Y = a.Y + b.Y;
+            return c;
+        }
+        public static Point MinusPoint(Point a, Point b)
+        {
+            Point c = new Point();
+            c.X = a.X - b.X;
+            c.Y = a.Y - b.Y;
+            return c;
+        }
+        public static void ChangeMas(Point d)
+        {
+            for (int i = 0; i < CoordMas.Count; i++)
+            {
+                CoordMas[i] = AddPoint(CoordMas[i], d);
+            }
+        }
+        public static bool IsIntersected(Point a, Point b, Point c, Point d)
 		{
 			var common = (b.X - a.X) * (d.Y - c.Y) - (b.Y - a.Y) * (d.X - c.X);
 
@@ -121,6 +144,7 @@ namespace Chain
 
 		public static Point GetCoord(TransformationMatrix tM, CoordinatesMatrix cM)
 		{
+           
 			var res = new Point
 			{
 				X = tM.TransMatrix[0, 0] * cM.Vector[0] + tM.TransMatrix[0, 1] * cM.Vector[1] +
