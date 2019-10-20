@@ -266,8 +266,12 @@ namespace Chain
                             TransformationMatrix tM = new TransformationMatrix(a, ChainList, i);
                             CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
                             var vs = ChainList[i].Visual as VisualSegment;
-                            var vj = ChainList[i+1].Visual as VisualJoint;
-                            vj.Coordinate = Calculations.GetCoord(tM, cM);
+                            if (i+1 < ChainList.Count)
+                            {
+                                var vj = ChainList[i + 1].Visual as VisualJoint;
+                                vj.Coordinate = Calculations.GetCoord(tM, cM);
+                            }
+                            
                             vs.End = Calculations.GetCoord(tM, cM);
                             Calculations.CoordMas[i] = Calculations.GetCoord(tM, cM);
                             if (i+1 < Calculations.CoordMas.Count)
@@ -335,8 +339,9 @@ namespace Chain
                 {
                     if (Calculations.CoordMas.Count == 0)
                     {
-                        Point p = new Point { X = 234, Y = 163 };
-                        Calculations.CoordMas.Add(p);
+                        var j = ChainList[0].Visual as VisualJoint;
+                        
+                        Calculations.CoordMas.Add(j.Coordinate);
                     }
                 }
             }
