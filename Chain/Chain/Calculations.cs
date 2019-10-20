@@ -131,8 +131,8 @@ namespace Chain
 			tM.X = res.X;
 			tM.Y = res.Y;
             
-			CoordMas.Add(res);
-            CoordMas.Add(res);
+			//CoordMas.Add(res);
+            //CoordMas.Add(res);
             return res;
 		}
 	}
@@ -164,10 +164,10 @@ namespace Chain
 			{
 				num = ChainList.Count;
 			}
-
-			for (int i = 0; i < num; i++)
+            angle = 0;
+			for (int i = 1; i < num; i++)
 			{
-				var o = ChainList[i];
+				var o = ChainList[i-1];
 				switch (o)
 				{
 					case Joint j:
@@ -178,11 +178,11 @@ namespace Chain
 
 			var rad = Calculations.DegreeToRadian(angle);
 			TransMatrix[0, 0] = Math.Cos(rad);
-			TransMatrix[0, 1] = Math.Sin(rad);
-			TransMatrix[0, 2] = Calculations.CoordMas[num].X;
+            TransMatrix[0, 1] = Math.Sin(rad);
+            TransMatrix[0, 2] = Calculations.CoordMas[num-1].X;
 			TransMatrix[1, 0] = -Math.Sin(rad);
-			TransMatrix[1, 1] = Math.Cos(rad);
-			TransMatrix[1, 2] = Calculations.CoordMas[num].Y;
+            TransMatrix[1, 1] = Math.Cos(rad);
+            TransMatrix[1, 2] = Calculations.CoordMas[num-1].Y;
 			TransMatrix[2, 0] = 0;
 			TransMatrix[2, 1] = 0;
 			TransMatrix[2, 2] = 1;
@@ -202,9 +202,10 @@ namespace Chain
 
 		public CoordinatesMatrix(Segment s, Joint j)
 		{
-			Vector[0] = s.Length * Math.Sin(Calculations.DegreeToRadian(j.CurrentAngle));
-			Vector[1] = s.Length * Math.Cos(Calculations.DegreeToRadian(j.CurrentAngle));
-			Vector[2] = 1;
+            
+            Vector[0] = s.Length * Math.Sin(Calculations.DegreeToRadian(j.CurrentAngle));
+            Vector[1] = s.Length * Math.Cos(Calculations.DegreeToRadian(j.CurrentAngle));
+            Vector[2] = 1;
 		}
-	}
+	} 
 }

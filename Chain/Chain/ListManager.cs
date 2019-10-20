@@ -24,11 +24,11 @@ namespace Chain
 
 		public void Add(Object objec = null)
 		{
-            if ((Calculations.CoordMas.Count == 0) || (Calculations.CoordMas.Count == 1))
+            /*if ((Calculations.CoordMas.Count == 0) || (Calculations.CoordMas.Count == 1))
             {
-                Point p = new Point(0,0);
+                Point p = new Point(163,234);
                 Calculations.CoordMas.Add(p);
-            }
+            }*/
             Object obj;
 			if (objec != null)
 				obj = objec;
@@ -251,44 +251,94 @@ namespace Chain
 
 		private void ObjOnObjectChanged(Object obj)
 		{
-			if (obj is Joint)
+            if (obj.Id != ChainList.Count - 1)
             {
-                var nj = obj as Joint;
-                double a = nj.CurrentAngle;
-                for (int i = obj.Id + 1; i < ChainList.Count; i += 2)
+                if (obj is Joint)
                 {
-                    if (ChainList[i] is Segment)
+                    var nj = obj as Joint;
+                    double a = nj.CurrentAngle;
+                    for (int i = obj.Id + 1; i < ChainList.Count; i += 2)
                     {
-                        var s = ChainList[i] as Segment;
-                        var j = ChainList[i - 1] as Joint;
-                        TransformationMatrix tM = new TransformationMatrix(a, ChainList, i);
-                        CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
-                        var vs = ChainList[i].Visual as VisualSegment;
-                        vs.End = Calculations.GetCoord(tM, cM);
+                        if (ChainList[i] is Segment)
+                        {
+                            var s = ChainList[i] as Segment;
+                            var j = ChainList[i - 1] as Joint;
+                            TransformationMatrix tM = new TransformationMatrix(a, ChainList, i);
+                            CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
+                            var vs = ChainList[i].Visual as VisualSegment;
+                            var vj = ChainList[i+1].Visual as VisualJoint;
+                            vj.Coordinate = Calculations.GetCoord(tM, cM);
+                            vs.End = Calculations.GetCoord(tM, cM);
+                            Calculations.CoordMas[i] = Calculations.GetCoord(tM, cM);
+                            if (i+1 < Calculations.CoordMas.Count)
+                            {
+                                Calculations.CoordMas[i + 1] = Calculations.GetCoord(tM, cM);
+                            }
+                        }
+                    }
+                }
+                if (obj is Segment)
+                {
+                    var ns = obj as Segment;
+                    var j = ChainList[obj.Id - 1] as Joint;
+                    var s = ChainList[obj.Id] as Segment;
+                    var vs = ChainList[obj.Id].Visual as VisualSegment;
+                    Point dR = new Point();
+                    TransformationMatrix tM = new TransformationMatrix(j.CurrentAngle, ChainList, obj.Id);
+                    CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
+                    dR = Calculations.GetCoord(tM, cM);
+                    Calculations.CoordMas[obj.Id] = Calculations.GetCoord(tM, cM);
+                    Calculations.CoordMas[obj.Id+1] = Calculations.GetCoord(tM, cM);
+                    
+                    ChainList[obj.Id] = s;
+                    double dX = dR.X - vs.End.X;
+                    double dY = dR.Y - vs.End.Y;
+                    vs.End = dR;
+                    for (int i = obj.Id + 2; i < ChainList.Count; i += 2)
+                    {
+                        var vss = ChainList[i].Visual as VisualSegment;
+                        var x = vss.End.X + dX;
+                        var y = vss.End.Y + dY;
+                        vss.End = new Point(x, y);
+                        Calculations.CoordMas[i] = new Point(x, y);
+                        if (i + 1 < Calculations.CoordMas.Count)
+                        {
+                            Calculations.CoordMas[i + 1] = new Point(x, y);
+                        }
                     }
                 }
             }
-            if (obj is Segment)
+            else
             {
-                var ns = obj as Segment;
-                var j = ChainList[obj.Id - 1] as Joint;
-                var s = ChainList[obj.Id] as Segment;
-                var vs = ChainList[obj.Id].Visual as VisualSegment;
-                Point dR = new Point();
-                TransformationMatrix tM = new TransformationMatrix(j.CurrentAngle, ChainList, obj.Id);
-                CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
-                dR = Calculations.GetCoord(tM, cM);
-                vs.End = dR;
-                ChainList[obj.Id] = s;
-                double dX = dR.X - vs.End.X;
-                double dY = dR.Y - vs.End.Y;
-                for (int i = obj.Id + 2; i < ChainList.Count; i += 2)
+                if (obj.Id != 0)
                 {
-                    var vss = ChainList[i].Visual as VisualSegment;
-                    var x = vss.End.X + dX;
-                    var y = vss.End.Y + dY;
-                    vss.End = new Point(x,y);
-                }  
+                    if (obj is Joint)
+                    {
+                        Point p = new Point();
+                        p = Calculations.CoordMas[obj.Id - 1];
+                        Calculations.CoordMas.Add(p);
+                    }
+                    if (obj is Segment)
+                    {
+                        Point p = new Point();
+                        var s = ChainList[obj.Id] as Segment;
+                        var j = ChainList[obj.Id - 1] as Joint;
+                        TransformationMatrix tM = new TransformationMatrix(j.CurrentAngle, ChainList, obj.Id);
+                        CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
+                        //p = Calculations.GetCoord(tM, cM);
+                        var vss = ChainList[obj.Id].Visual as VisualSegment;
+                        vss.End = Calculations.GetCoord(tM, cM);
+                        Calculations.CoordMas.Add(Calculations.GetCoord(tM, cM));
+                    }
+                }
+                else
+                {
+                    if (Calculations.CoordMas.Count == 0)
+                    {
+                        Point p = new Point { X = 234, Y = 163 };
+                        Calculations.CoordMas.Add(p);
+                    }
+                }
             }
 
 			for (var i = obj.Id; i < ChainList.Count; i++)
