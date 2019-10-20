@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using System.Windows;
 
 namespace Chain
 {
@@ -106,8 +105,6 @@ namespace Chain
 				NotifyPropertyChanged(() => Efemerik);
 			}
 		}
-
-		//public override event Action<Object> ObjectChanged;
 	}
 
 	public class Joint : Object

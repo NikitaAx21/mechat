@@ -22,16 +22,11 @@ namespace Chain
 			_panel = panel;
 		}
 
-		public void Add(Object objec = null)
+		public void Add(Object objectForAdding = null)
 		{
-            /*if ((Calculations.CoordMas.Count == 0) || (Calculations.CoordMas.Count == 1))
-            {
-                Point p = new Point(163,234);
-                Calculations.CoordMas.Add(p);
-            }*/
-            Object obj;
-			if (objec != null)
-				obj = objec;
+			Object obj;
+			if (objectForAdding != null)
+				obj = objectForAdding;
 
 			else
 			{
@@ -41,12 +36,20 @@ namespace Chain
 
 			obj.Id = ChainList.Count;
 			obj.Visual.OnSelectedChanged += Select;
-			obj.ObjectChanged += ObjOnObjectChanged;
+			obj.ObjectChanged += OnObjectChanged;
 			ChainList.Add(obj);
 		}
 
 		public void Delete(int id)
 		{
+			foreach (var o in ChainList)
+			{
+				if (o.Id < id) continue;
+
+				o.ObjectChanged -= OnObjectChanged;
+				o.Visual.OnSelectedChanged -= Select;
+			}
+
 			ChainList.RemoveAll(o => o.Id >= id);
 		}
 
@@ -249,135 +252,156 @@ namespace Chain
 			}
 		}
 
-		private void ObjOnObjectChanged(Object obj)
+		private void OnObjectChanged(Object obj)
 		{
-            if (obj.Id != ChainList.Count - 1)
-            {
-                if (obj is Joint)
-                {
-                    var nj = obj as Joint;
-                    double a = nj.CurrentAngle;
-                    for (int i = obj.Id + 1; i < ChainList.Count; i += 2)
-                    {
-                        if (ChainList[i] is Segment)
-                        {
-                            var s = ChainList[i] as Segment;
-                            var j = ChainList[i - 1] as Joint;
-                            TransformationMatrix tM = new TransformationMatrix(a, ChainList, i);
-                            CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
-                            var vs = ChainList[i].Visual as VisualSegment;
-                            if (i+1 < ChainList.Count)
-                            {
-                                var vj = ChainList[i + 1].Visual as VisualJoint;
-                                vj.Coordinate = Calculations.GetCoord(tM, cM);
-                            }
-                            
-                            vs.End = Calculations.GetCoord(tM, cM);
-                            Calculations.CoordMas[i] = Calculations.GetCoord(tM, cM);
-                            if (i+1 < Calculations.CoordMas.Count)
-                            {
-                                Calculations.CoordMas[i + 1] = Calculations.GetCoord(tM, cM);
-                            }
-                        }
-                    }
-                }
-                if (obj is Segment)
-                {
-                    var ns = obj as Segment;
-                    var j = ChainList[obj.Id - 1] as Joint;
-                    var s = ChainList[obj.Id] as Segment;
-                    var vs = ChainList[obj.Id].Visual as VisualSegment;
-                    Point dR = new Point();
-                    TransformationMatrix tM = new TransformationMatrix(j.CurrentAngle, ChainList, obj.Id);
-                    CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
-                    dR = Calculations.GetCoord(tM, cM);
-                    Calculations.CoordMas[obj.Id] = Calculations.GetCoord(tM, cM);
-                    Calculations.CoordMas[obj.Id+1] = Calculations.GetCoord(tM, cM);
-                    
-                    ChainList[obj.Id] = s;
-                    double dX = dR.X - vs.End.X;
-                    double dY = dR.Y - vs.End.Y;
-                    vs.End = dR;
-                    for (int i = obj.Id + 2; i < ChainList.Count; i += 2)
-                    {
-                        var vss = ChainList[i].Visual as VisualSegment;
-                        var x = vss.End.X + dX;
-                        var y = vss.End.Y + dY;
-                        vss.End = new Point(x, y);
-                        Calculations.CoordMas[i] = new Point(x, y);
-                        if (i + 1 < Calculations.CoordMas.Count)
-                        {
-                            Calculations.CoordMas[i + 1] = new Point(x, y);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (obj.Id != 0)
-                {
-                    if (obj is Joint)
-                    {
-                        Point p = new Point();
-                        p = Calculations.CoordMas[obj.Id - 1];
-                        Calculations.CoordMas.Add(p);
-                    }
-                    if (obj is Segment)
-                    {
-                        Point p = new Point();
-                        var s = ChainList[obj.Id] as Segment;
-                        var j = ChainList[obj.Id - 1] as Joint;
-                        TransformationMatrix tM = new TransformationMatrix(j.CurrentAngle, ChainList, obj.Id);
-                        CoordinatesMatrix cM = new CoordinatesMatrix(s, j);
-                        //p = Calculations.GetCoord(tM, cM);
-                        var vss = ChainList[obj.Id].Visual as VisualSegment;
-                        vss.End = Calculations.GetCoord(tM, cM);
-                        Calculations.CoordMas.Add(Calculations.GetCoord(tM, cM));
-                    }
-                }
-                else
-                {
-                    if (Calculations.CoordMas.Count == 0)
-                    {
-                        var j = ChainList[0].Visual as VisualJoint;
-                        
-                        Calculations.CoordMas.Add(j.Coordinate);
-                    }
-                }
-            }
-
-			for (var i = obj.Id; i < ChainList.Count; i++)
+			if (obj.Id != ChainList.Count - 1)
 			{
-				var o = ChainList[i];
-				if (o is Joint)
+				switch (obj)
 				{
-					var visualJoint = o.Visual as VisualJoint;
-					if (visualJoint == null)
-						continue;
-
-					if (i > 0)
+					case Joint modifiedJoint:
 					{
-						var visualSegment = ChainList[i - 1].Visual as VisualSegment;
-						if (visualSegment != null)
-							visualJoint.Coordinate = visualSegment.End;
-					}
-					else
-						visualJoint.PutOnCenter();
-				}
+						var currentAngle = modifiedJoint.CurrentAngle;
+						for (var i = modifiedJoint.Id + 1; i < ChainList.Count; i += 2)
+						{
+							if (!(ChainList[i] is Segment currentSegment))
+								continue;
 
-				if (o is Segment)
-				{
-					var visualSegment = o.Visual as VisualSegment;
-					var visualJoint = ChainList[i - 1].Visual as VisualJoint;
-					if (visualSegment != null && visualJoint != null)
-						visualSegment.Begin = visualJoint.Coordinate;
+							if (!(ChainList[i - 1] is Joint prevJoint))
+								throw new ArgumentNullException(nameof(prevJoint));
+
+							var tM = new TransformationMatrix(currentAngle, ChainList, i);
+							var cM = new CoordinatesMatrix(currentSegment, prevJoint);
+							var visualSegment = (VisualSegment)ChainList[i].Visual;
+
+							var coordinates = Calculations.GetCoord(tM, cM);
+							if (i + 1 < ChainList.Count)
+							{
+								if (ChainList[i + 1].Visual is VisualJoint vj)
+									vj.Coordinate = coordinates;
+							}
+
+							visualSegment.End = coordinates;
+							Calculations.CoordMas[i] = coordinates;
+							if (i + 1 < Calculations.CoordMas.Count)
+							{
+								Calculations.CoordMas[i + 1] = coordinates;
+							}
+						}
+
+						break;
+					}
+
+					case Segment modifiedSegment:
+					{
+						if (!(ChainList[obj.Id - 1] is Joint prevJoint))
+							throw new ArgumentNullException(nameof(prevJoint));
+
+						var visualSegment = (VisualSegment)modifiedSegment.Visual;
+						var tM = new TransformationMatrix(prevJoint.CurrentAngle, ChainList, obj.Id);
+						var cM = new CoordinatesMatrix(modifiedSegment, prevJoint);
+						var coordinates = Calculations.GetCoord(tM, cM);
+						Calculations.CoordMas[obj.Id] = Calculations.GetCoord(tM, cM);
+						Calculations.CoordMas[obj.Id + 1] = Calculations.GetCoord(tM, cM);
+
+						var dX = coordinates.X - visualSegment.End.X;
+						var dY = coordinates.Y - visualSegment.End.Y;
+						visualSegment.End = coordinates;
+						for (var i = obj.Id + 2; i < ChainList.Count; i += 2)
+						{
+							if (!(ChainList[i].Visual is VisualSegment currentVisualSegment))
+								continue;
+
+							var x = currentVisualSegment.End.X + dX;
+							var y = currentVisualSegment.End.Y + dY;
+							var newCoordinates = new Point(x, y);
+							currentVisualSegment.End = newCoordinates;
+							Calculations.CoordMas[i] = newCoordinates;
+							if (i + 1 < Calculations.CoordMas.Count)
+							{
+								Calculations.CoordMas[i + 1] = newCoordinates;
+							}
+						}
+
+						break;
+					}
 				}
 			}
+			else
+			{
+				if (obj.Id == 0)
+				{
+					if (!Calculations.CoordMas.Any())
+					{
+						var j = (VisualJoint)ChainList[0].Visual;
+						Calculations.CoordMas.Add(j.Coordinate);
+					}
+				}
+				else
+				{
+					switch (obj)
+					{
+						case Joint _:
+						{
+							var newSegmentCoordinatesEnd = Calculations.CoordMas[obj.Id - 1];
+							Calculations.CoordMas.Add(newSegmentCoordinatesEnd);
+							break;
+						}
+
+						case Segment lastSegment:
+						{
+							if (!(ChainList[obj.Id - 1] is Joint prevJoint))
+								throw new ArgumentNullException(nameof(prevJoint));
+
+							var lastVisualSegment = (VisualSegment)lastSegment.Visual;
+
+							var tM = new TransformationMatrix(prevJoint.CurrentAngle, ChainList, obj.Id);
+							var cM = new CoordinatesMatrix(lastSegment, prevJoint);
+							var coordinates = Calculations.GetCoord(tM, cM);
+							lastVisualSegment.End = coordinates;
+							Calculations.CoordMas.Add(coordinates);
+							break;
+						}
+					}
+				}
+			}
+
+			СhainObjects(obj.Id);
 		}
 
 		private void Select(VisualObject obj)
 		{
 			_panel.SelectedObject = obj.ParentObject;
+		}
+
+		private void СhainObjects(int startId)
+		{
+			for (var i = startId; i < ChainList.Count; i++)
+			{
+				switch (ChainList[i])
+				{
+					case Joint currentJoint:
+					{
+						var visualJoint = (VisualJoint)currentJoint.Visual;
+						if (i == 0)
+							visualJoint.PutOnCenter();
+						else
+						{
+							var prevVisualSegment = (VisualSegment)ChainList[i - 1].Visual;
+							visualJoint.Coordinate = prevVisualSegment.End;
+						}
+
+						break;
+					}
+
+					case Segment currentSegment:
+					{
+						var visualSegment = (VisualSegment)currentSegment.Visual;
+						var prevVisualJoint = (VisualJoint)ChainList[i - 1].Visual;
+						visualSegment.Begin = prevVisualJoint.Coordinate;
+						break;
+					}
+				}
+			}
 		}
 	}
 }
