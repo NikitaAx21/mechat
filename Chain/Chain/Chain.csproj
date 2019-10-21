@@ -58,6 +58,7 @@
     <Compile Include="AngleSlider.xaml.cs">
       <DependentUpon>AngleSlider.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BoolToOpacityConverter.cs" />
     <Compile Include="ListManager.cs" />
     <Compile Include="DoubleTrimmingConverter.cs" />
     <Compile Include="NullToBoolConverter.cs" />

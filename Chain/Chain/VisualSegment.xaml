@@ -9,7 +9,8 @@
 			 mc:Ignorable="d">
 	<local:VisualObject.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<Style TargetType="Rectangle"
+        <local:BoolToOpacityConverter  x:Key="BoolToOpacityConverter"/>
+        <Style TargetType="Rectangle"
 			   BasedOn="{StaticResource SelectingStyle}"
 			   x:Key="RectStyle">
 			<Setter Property="Stretch"
@@ -25,7 +26,7 @@
 		</Style>
 	</local:VisualObject.Resources>
 	<Grid Cursor="{x:Static Cursors.Hand}"
-		  Visibility="{Binding ParentObject.Visibility, Converter={StaticResource BooleanToVisibilityConverter}}"
+		  Opacity="{Binding ParentObject.Visibility, Converter={StaticResource BoolToOpacityConverter}}"
 		  MouseDown="OnSelected">
 		<!--Подложка для подсветки при наведении-->
 		<Rectangle Fill="White"
