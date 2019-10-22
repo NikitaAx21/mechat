@@ -45,8 +45,17 @@ namespace Chain
 			var x = canvas.ActualWidth / 2;
 			Coordinate = new Point(x, y);
 		}
+        public Point GetCurrentCanvasParameters()
+        {
+            Point res = new Point() { X = 1, Y = 1 };
+            //var vJ = j.Visual as VisualJoint;
+            var canvas = VisualParent as Canvas;
+            res.X = canvas.ActualWidth;
+            res.Y = canvas.ActualHeight;
+            return res;
+        }
 
-		public override event Action<VisualObject> OnSelectedChanged;
+        public override event Action<VisualObject> OnSelectedChanged;
 
 		private void OnSelected(object sender, MouseButtonEventArgs e)
 		{

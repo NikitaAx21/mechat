@@ -14,6 +14,7 @@ namespace Chain
 		public List<Object> ChainList;
 		private readonly Panel _panel;
 		private string _path = "";
+		private Point _centerPoint = new Point();
 
 		public ListManager(Panel panel)
 		{
@@ -252,8 +253,81 @@ namespace Chain
 			}
 		}
 
+		private bool IsItBig()
+		{
+			var j = ChainList[0].Visual as VisualJoint;
+			var canvasProperties = j.GetCurrentCanvasParameters();
+
+			var flag = 0;
+			foreach (var element in ChainList)
+			{
+				if (element is Joint)
+				{
+					var vj = (VisualJoint)element.Visual;
+					if ((vj.Coordinate.X > canvasProperties.X) || (vj.Coordinate.Y > canvasProperties.Y) ||
+						(vj.Coordinate.X <= 0) || (vj.Coordinate.Y <= 0))
+					{
+						flag++;
+						break;
+					}
+				}
+				else
+				{
+					var vs = (VisualSegment)element.Visual;
+					if ((vs.End.X > canvasProperties.X) || (vs.End.Y > canvasProperties.Y) || (vs.End.X <= 0) ||
+						(vs.End.Y <= 0))
+					{
+						flag++;
+						break;
+					}
+				}
+			}
+
+			return flag != 0;
+		}
+
+		private bool IsItSmall()
+		{
+			if (ChainList.Count <= 1)
+				return false;
+
+			var j = ChainList[0].Visual as VisualJoint;
+			var canvasProperties = j.GetCurrentCanvasParameters();
+
+			var flag = 0;
+			foreach (var element in ChainList)
+			{
+				if (element is Joint)
+				{
+					var vj = (VisualJoint)element.Visual;
+					if (((vj.Coordinate.X <= 0.9 * canvasProperties.X) &&
+						 (vj.Coordinate.X >= 0.1 * canvasProperties.X)) &&
+						((vj.Coordinate.Y <= 0.9 * canvasProperties.Y) &&
+						 (vj.Coordinate.Y >= 0.1 * canvasProperties.Y)))
+					{
+						flag++;
+					}
+				}
+				else
+				{
+					var vs = (VisualSegment)element.Visual;
+					if (((vs.End.X <= 0.9 * canvasProperties.X) && (vs.End.X >= 0.1 * canvasProperties.X)) &&
+						((vs.End.Y <= 0.9 * canvasProperties.Y) && (vs.End.Y >= 0.1 * canvasProperties.Y)))
+					{
+						flag++;
+					}
+				}
+			}
+
+			return flag == ChainList.Count;
+		}
+
 		private void OnObjectChanged(Object obj)
 		{
+			var cJ = ChainList[0].Visual as VisualJoint;
+			_centerPoint = Calculations.MinusPoint(cJ.Coordinate, _centerPoint);
+			Calculations.ChangeMas(_centerPoint);
+			_centerPoint = cJ.Coordinate;
 			if (obj.Id != ChainList.Count - 1)
 			{
 				switch (obj)
@@ -293,6 +367,7 @@ namespace Chain
 
 					case Segment modifiedSegment:
 					{
+						Calculations.LengthMas[obj.Id / 2] = modifiedSegment.Length * Calculations.CoefficientOfScale;
 						if (!(ChainList[obj.Id - 1] is Joint prevJoint))
 							throw new ArgumentNullException(nameof(prevJoint));
 
@@ -343,7 +418,9 @@ namespace Chain
 						case Joint _:
 						{
 							var newSegmentCoordinatesEnd = Calculations.CoordMas[obj.Id - 1];
-							Calculations.CoordMas.Add(newSegmentCoordinatesEnd);
+							if (obj.Id < Calculations.CoordMas.Count)
+								Calculations.CoordMas[obj.Id] = newSegmentCoordinatesEnd;
+							else Calculations.CoordMas.Add(newSegmentCoordinatesEnd);
 							break;
 						}
 
@@ -355,16 +432,21 @@ namespace Chain
 							var lastVisualSegment = (VisualSegment)lastSegment.Visual;
 
 							var tM = new TransformationMatrix(prevJoint.CurrentAngle, ChainList, obj.Id);
+							if (obj.Id / 2 == Calculations.LengthMas.Count)
+								Calculations.LengthMas.Add(Calculations.CoefficientOfScale * lastSegment.Length);
 							var cM = new CoordinatesMatrix(lastSegment, prevJoint);
 							var coordinates = Calculations.GetCoord(tM, cM);
 							lastVisualSegment.End = coordinates;
-							Calculations.CoordMas.Add(coordinates);
+							if (obj.Id < Calculations.CoordMas.Count)
+								Calculations.CoordMas[obj.Id] = coordinates;
+							else Calculations.CoordMas.Add(coordinates);
 							break;
 						}
 					}
 				}
 			}
 
+			RescaleIfNeeded();
 			СhainObjects(obj.Id);
 		}
 
@@ -401,6 +483,35 @@ namespace Chain
 						break;
 					}
 				}
+			}
+		}
+
+		private void RescaleIfNeeded()
+		{
+			if (IsItBig())
+			{
+				Calculations.MinusScale();
+				for (var i = 0; i < Calculations.LengthMas.Count; i++)
+				{
+					Calculations.LengthMas[i] *= Calculations.CoefficientOfScale;
+				}
+
+				ChainList[0].OnObjectChanged();
+			}
+			//TEST
+
+			if (IsItSmall())
+			{
+				if (Calculations.CoefficientOfScale >= 1)
+					return;
+
+				Calculations.PlusScale();
+				for (var i = 0; i < Calculations.LengthMas.Count; i++)
+				{
+					Calculations.LengthMas[i] *= Calculations.CoefficientOfScale;
+				}
+
+				ChainList[0].OnObjectChanged();
 			}
 		}
 	}
