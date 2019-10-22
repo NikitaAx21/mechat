@@ -13,16 +13,17 @@ namespace Chain
 		public double[,] matr = new double[3, 3];
 		public double[] vect = new double[3];
         public static List<Point> CoordMas = new List<Point>();
-
-		/// <summary>
-		/// Метод для вычисления координат в Лаб.С.К.
-		///В метод передается матрица преобразования и вектор координат в собственной с.к.
-		///Возвращается Point из двух элементов[x, y]
-		/// </summary>
-		/// <param name="tM"></param>
-		/// <param name="cM"></param>
-		/// <returns></returns>
-		public Point Mass_center(List<Object> list)
+        public static List<double> LengthMas = new List<double>();
+        public static double CoefficientOfScale = 1;
+        /// <summary>
+        /// Метод для вычисления координат в Лаб.С.К.
+        ///В метод передается матрица преобразования и вектор координат в собственной с.к.
+        ///Возвращается Point из двух элементов[x, y]
+        /// </summary>
+        /// <param name="tM"></param>
+        /// <param name="cM"></param>
+        /// <returns></returns>
+        public Point Mass_center(List<Object> list)
 		{
 			double coordX = 0;
 			double coordY = 0;
@@ -78,11 +79,17 @@ namespace Chain
 		{
 			return Math.PI * A / 180.0;
 		}
-
-        public static int GetScale()
-        {
-            return 1;
+        public MainWindow mWindow;
+        public static void MinusScale()
+        { 
+            Calculations.CoefficientOfScale *= 0.9;
+           // if (Calculations.CoefficientOfScale < 1) Calculations.CoefficientOfScale = 1;
         }
+        public static void PlusScale()
+        {
+            Calculations.CoefficientOfScale *= 1.1;
+        }
+
         public static Point AddPoint(Point a, Point b)
         {
             Point c = new Point();
@@ -144,7 +151,6 @@ namespace Chain
 
 		public static Point GetCoord(TransformationMatrix tM, CoordinatesMatrix cM)
 		{
-           
 			var res = new Point
 			{
 				X = tM.TransMatrix[0, 0] * cM.Vector[0] + tM.TransMatrix[0, 1] * cM.Vector[1] +
@@ -154,9 +160,6 @@ namespace Chain
 			};
 			tM.X = res.X;
 			tM.Y = res.Y;
-            
-			//CoordMas.Add(res);
-            //CoordMas.Add(res);
             return res;
 		}
 	}
@@ -167,7 +170,6 @@ namespace Chain
 		private double _curAngle = 0;
 		public double X = 0; //для хранения координаты конца предыдущего сегмента
 		public double Y = 0;
-
 		public TransformationMatrix()
 		{
 			TransMatrix[0, 0] = 1;
@@ -180,7 +182,6 @@ namespace Chain
 			TransMatrix[2, 1] = 0;
 			TransMatrix[2, 2] = 1;
 		}
-
 		//Матрица для поворота системы на угол "angle" начиная с элемента №"num" в коллекции ChainList
 		public TransformationMatrix(double angle, List<Object> ChainList, int num = 0)
 		{
@@ -226,9 +227,9 @@ namespace Chain
 
 		public CoordinatesMatrix(Segment s, Joint j)
 		{
-            
-            Vector[0] = s.Length * Math.Sin(Calculations.DegreeToRadian(j.CurrentAngle));
-            Vector[1] = s.Length * Math.Cos(Calculations.DegreeToRadian(j.CurrentAngle));
+            int i = s.Id;
+            Vector[0] = Calculations.CoefficientOfScale * s.Length * Math.Sin(Calculations.DegreeToRadian(j.CurrentAngle));
+            Vector[1] = Calculations.CoefficientOfScale * s.Length * Math.Cos(Calculations.DegreeToRadian(j.CurrentAngle));
             Vector[2] = 1;
 		}
 	} 
