@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Chain
 {
@@ -12,18 +10,19 @@ namespace Chain
 		private double _dY;
 		public double[,] matr = new double[3, 3];
 		public double[] vect = new double[3];
-        public static List<Point> CoordMas = new List<Point>();
-        public static List<double> LengthMas = new List<double>();
-        public static double CoefficientOfScale = 1;
-        /// <summary>
-        /// Метод для вычисления координат в Лаб.С.К.
-        ///В метод передается матрица преобразования и вектор координат в собственной с.к.
-        ///Возвращается Point из двух элементов[x, y]
-        /// </summary>
-        /// <param name="tM"></param>
-        /// <param name="cM"></param>
-        /// <returns></returns>
-        public Point Mass_center(List<Object> list)
+		public static List<Point> CoordMas = new List<Point>();
+		public static List<double> LengthMas = new List<double>();
+		public static double CoefficientOfScale = 1;
+
+		/// <summary>
+		/// Метод для вычисления координат в Лаб.С.К.
+		/// В метод передается матрица преобразования и вектор координат в собственной с.к.
+		/// Возвращается Point из двух элементов[x, y]
+		/// </summary>
+		/// <param name="tM"></param>
+		/// <param name="cM"></param>
+		/// <returns></returns>
+		public Point Mass_center(List<Object> list)
 		{
 			double coordX = 0;
 			double coordY = 0;
@@ -57,8 +56,8 @@ namespace Chain
 					}
 					else
 					{
-						coordX += (Calculations.CoordMas[i].X + Calculations.CoordMas[i-2].X) / 2 * list[i].Mass;
-						coordY += (Calculations.CoordMas[i].Y + Calculations.CoordMas[i-2].Y) / 2 * list[i].Mass;
+						coordX += (Calculations.CoordMas[i].X + Calculations.CoordMas[i - 2].X) / 2 * list[i].Mass;
+						coordY += (Calculations.CoordMas[i].Y + Calculations.CoordMas[i - 2].Y) / 2 * list[i].Mass;
 					}
 				}
 			}
@@ -79,39 +78,45 @@ namespace Chain
 		{
 			return Math.PI * A / 180.0;
 		}
-        public MainWindow mWindow;
-        public static void MinusScale()
-        { 
-            Calculations.CoefficientOfScale *= 0.9;
-           // if (Calculations.CoefficientOfScale < 1) Calculations.CoefficientOfScale = 1;
-        }
-        public static void PlusScale()
-        {
-            Calculations.CoefficientOfScale *= 1.1;
-        }
 
-        public static Point AddPoint(Point a, Point b)
-        {
-            Point c = new Point();
-            c.X = a.X + b.X;
-            c.Y = a.Y + b.Y;
-            return c;
-        }
-        public static Point MinusPoint(Point a, Point b)
-        {
-            Point c = new Point();
-            c.X = a.X - b.X;
-            c.Y = a.Y - b.Y;
-            return c;
-        }
-        public static void ChangeMas(Point d)
-        {
-            for (int i = 0; i < CoordMas.Count; i++)
-            {
-                CoordMas[i] = AddPoint(CoordMas[i], d);
-            }
-        }
-        public static bool IsIntersected(Point a, Point b, Point c, Point d)
+		public MainWindow mWindow;
+
+		public static void MinusScale()
+		{
+			Calculations.CoefficientOfScale *= 0.9;
+			// if (Calculations.CoefficientOfScale < 1) Calculations.CoefficientOfScale = 1;
+		}
+
+		public static void PlusScale()
+		{
+			Calculations.CoefficientOfScale *= 1.1;
+		}
+
+		public static Point AddPoint(Point a, Point b)
+		{
+			Point c = new Point();
+			c.X = a.X + b.X;
+			c.Y = a.Y + b.Y;
+			return c;
+		}
+
+		public static Point MinusPoint(Point a, Point b)
+		{
+			Point c = new Point();
+			c.X = a.X - b.X;
+			c.Y = a.Y - b.Y;
+			return c;
+		}
+
+		public static void ChangeMas(Point d)
+		{
+			for (int i = 0; i < CoordMas.Count; i++)
+			{
+				CoordMas[i] = AddPoint(CoordMas[i], d);
+			}
+		}
+
+		public static bool IsIntersected(Point a, Point b, Point c, Point d)
 		{
 			var common = (b.X - a.X) * (d.Y - c.Y) - (b.Y - a.Y) * (d.X - c.X);
 
@@ -128,7 +133,7 @@ namespace Chain
 		public static int[] GetInetersectionElements(List<Object> ChainList)
 		{
 			int[] mas = new int[100];
-            int k = 0;
+			int k = 0;
 			for (int i = 2; i < ChainList.Count - 1; i += 2)
 			{
 				for (int j = i + 4; j < ChainList.Count; j += 2)
@@ -139,9 +144,9 @@ namespace Chain
 					Point d = Calculations.CoordMas[j - 2];
 					if (IsIntersected(a, b, c, d))
 					{
-                        mas[k] = i - 1;
-                        mas[k + 1] = j - 1;
-                        k += 2;
+						mas[k] = i - 1;
+						mas[k + 1] = j - 1;
+						k += 2;
 					}
 				}
 			}
@@ -160,7 +165,7 @@ namespace Chain
 			};
 			tM.X = res.X;
 			tM.Y = res.Y;
-            return res;
+			return res;
 		}
 	}
 
@@ -170,6 +175,7 @@ namespace Chain
 		private double _curAngle = 0;
 		public double X = 0; //для хранения координаты конца предыдущего сегмента
 		public double Y = 0;
+
 		public TransformationMatrix()
 		{
 			TransMatrix[0, 0] = 1;
@@ -182,6 +188,7 @@ namespace Chain
 			TransMatrix[2, 1] = 0;
 			TransMatrix[2, 2] = 1;
 		}
+
 		//Матрица для поворота системы на угол "angle" начиная с элемента №"num" в коллекции ChainList
 		public TransformationMatrix(double angle, List<Object> ChainList, int num = 0)
 		{
@@ -189,10 +196,11 @@ namespace Chain
 			{
 				num = ChainList.Count;
 			}
-            angle = 0;
+
+			angle = 0;
 			for (int i = 1; i < num; i++)
 			{
-				var o = ChainList[i-1];
+				var o = ChainList[i - 1];
 				switch (o)
 				{
 					case Joint j:
@@ -203,11 +211,11 @@ namespace Chain
 
 			var rad = Calculations.DegreeToRadian(angle);
 			TransMatrix[0, 0] = Math.Cos(rad);
-            TransMatrix[0, 1] = Math.Sin(rad);
-            TransMatrix[0, 2] = Calculations.CoordMas[num-1].X;
+			TransMatrix[0, 1] = Math.Sin(rad);
+			TransMatrix[0, 2] = Calculations.CoordMas[num - 1].X;
 			TransMatrix[1, 0] = -Math.Sin(rad);
-            TransMatrix[1, 1] = Math.Cos(rad);
-            TransMatrix[1, 2] = Calculations.CoordMas[num-1].Y;
+			TransMatrix[1, 1] = Math.Cos(rad);
+			TransMatrix[1, 2] = Calculations.CoordMas[num - 1].Y;
 			TransMatrix[2, 0] = 0;
 			TransMatrix[2, 1] = 0;
 			TransMatrix[2, 2] = 1;
@@ -227,10 +235,12 @@ namespace Chain
 
 		public CoordinatesMatrix(Segment s, Joint j)
 		{
-            int i = s.Id;
-            Vector[0] = Calculations.CoefficientOfScale * s.Length * Math.Sin(Calculations.DegreeToRadian(j.CurrentAngle));
-            Vector[1] = Calculations.CoefficientOfScale * s.Length * Math.Cos(Calculations.DegreeToRadian(j.CurrentAngle));
-            Vector[2] = 1;
+			int i = s.Id;
+			Vector[0] = Calculations.CoefficientOfScale * s.Length *
+						Math.Sin(Calculations.DegreeToRadian(j.CurrentAngle));
+			Vector[1] = Calculations.CoefficientOfScale * s.Length *
+						Math.Cos(Calculations.DegreeToRadian(j.CurrentAngle));
+			Vector[2] = 1;
 		}
-	} 
+	}
 }

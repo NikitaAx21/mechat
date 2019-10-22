@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Chain
 {
@@ -22,10 +21,9 @@ namespace Chain
 			Panel.SelectedObject = center;
 			Canvas.Children.Add(center.Visual);
 		}
-        
-        
 
-        public ListManager LManager;
+		public ListManager LManager;
+
 		private void SaveList(object sender, RoutedEventArgs e)
 		{
 			LManager.Save();
