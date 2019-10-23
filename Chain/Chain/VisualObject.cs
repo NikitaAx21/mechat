@@ -8,6 +8,7 @@ namespace Chain
 	public abstract class VisualObject : UserControl, INotifyPropertyChanged
 	{
 		private bool _isSelected;
+		private bool _interseced;
 		public virtual event Action<VisualObject> OnSelectedChanged;
 
 		public bool IsSelected
@@ -20,7 +21,23 @@ namespace Chain
 			}
 		}
 
-		public bool Interseced { get; set; }
+		public bool Interseced
+		{
+			get => _interseced;
+			set
+			{
+				var isVisualSegment = this is VisualSegment;
+				if (!isVisualSegment)
+					return;
+
+				var segment = ParentObject as Segment;
+				if (segment == null || segment.Efemerik)
+					return;
+
+				_interseced = value;
+				NotifyPropertyChanged(() => Interseced);
+			}
+		}
 
 		public Object ParentObject { get; set; }
 

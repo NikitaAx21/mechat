@@ -322,6 +322,15 @@ namespace Chain
 			return flag == ChainList.Count;
 		}
 
+		private void SetInterseced()
+		{
+			var intercededElementsList = Calculations.GetInetersectionElements(ChainList);
+			foreach (var element in ChainList)
+			{
+				element.Visual.Interseced = intercededElementsList.Contains(element.Id);
+			}
+		}
+
 		private void OnObjectChanged(Object obj)
 		{
 			var cJ = ChainList[0].Visual as VisualJoint;
@@ -448,6 +457,7 @@ namespace Chain
 
 			RescaleIfNeeded();
 			СhainObjects(obj.Id);
+			SetInterseced();
 		}
 
 		private void Select(VisualObject obj)

@@ -19,7 +19,7 @@
 			<DataTrigger Binding="{Binding Interseced}"
 						 Value="True">
 				<Setter Property="Fill"
-						Value="Red" />
+						Value="Brown" />
 			</DataTrigger>
 		</Style.Triggers>
 	</Style>
