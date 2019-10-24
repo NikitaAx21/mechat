@@ -130,31 +130,38 @@ namespace Chain
 			return r >= 0 && r <= 1 && s >= 0 && s <= 1;
 		}
 
-		public static int[] GetInetersectionElements(List<Object> ChainList)
-		{
-			int[] mas = new int[100];
-			int k = 0;
-			for (int i = 2; i < ChainList.Count - 1; i += 2)
-			{
-				for (int j = i + 4; j < ChainList.Count; j += 2)
-				{
-					Point a = Calculations.CoordMas[i];
-					Point b = Calculations.CoordMas[i - 2];
-					Point c = Calculations.CoordMas[j];
-					Point d = Calculations.CoordMas[j - 2];
-					if (IsIntersected(a, b, c, d))
-					{
-						mas[k] = i - 1;
-						mas[k + 1] = j - 1;
-						k += 2;
-					}
-				}
-			}
+        public static List<int> GetInetersectionElements(List<Object> ChainList)
+        {
+            List<int> mas = new List<int>();
+            int k = 0;
+            if (Calculations.CoordMas.Count > 4)
+            {
+                for (int i = 2; i < ChainList.Count - 1; i += 2)
+                {
+                    for (int j = i + 3; j < ChainList.Count; j += 2)
+                    {
+                        Point a = Calculations.CoordMas[i];
+                        Point b = Calculations.CoordMas[i - 2];
+                        Point c = Calculations.CoordMas[j];
+                        Point d = Calculations.CoordMas[j - 2];
+                        if (IsIntersected(a, b, c, d))
+                        {
+                            var s1 = ChainList[i - 1] as Segment;
+                            var s2 = ChainList[j] as Segment;
+                            if ((s1.Efemerik == false) && (s2.Efemerik == false))
+                            {
+                                mas.Add(i - 1);
+                                mas.Add(j);
+                                k += 2;
+                            }
+                        }
+                    }
+                }
+            }
+            return mas;
+        }
 
-			return mas;
-		}
-
-		public static Point GetCoord(TransformationMatrix tM, CoordinatesMatrix cM)
+        public static Point GetCoord(TransformationMatrix tM, CoordinatesMatrix cM)
 		{
 			var res = new Point
 			{
