@@ -46,18 +46,6 @@ namespace Chain
 			Coordinate = new Point(x, y);
 		}
 
-		public Point GetCurrentCanvasParameters()
-		{
-			var res = new Point();
-			if (!(VisualParent is Canvas canvas))
-				return res;
-
-			res.X = canvas.ActualWidth;
-			res.Y = canvas.ActualHeight;
-
-			return res;
-		}
-
 		public override event Action<VisualObject> OnSelectedChanged;
 
 		private void OnSelected(object sender, MouseButtonEventArgs e)

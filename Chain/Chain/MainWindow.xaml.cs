@@ -11,7 +11,10 @@ namespace Chain
 		public MainWindow()
 		{
 			InitializeComponent();
-			LManager = new ListManager(Panel);
+			LManager = new ListManager();
+			_renderer = new Renderer(LManager);
+			LManager.ObjectSelected += OnObjectSelected;
+			LManager.ObjectChanged += _renderer.OnObjectChanged;
 
 			LManager.Add();
 			var center = LManager.ChainList.Last() as Joint;
@@ -23,6 +26,7 @@ namespace Chain
 		}
 
 		public ListManager LManager;
+		private Renderer _renderer;
 
 		private void SaveList(object sender, RoutedEventArgs e)
 		{
@@ -75,6 +79,11 @@ namespace Chain
 			var obj = LManager.ChainList.Last();
 			Canvas.Children.Add(obj.Visual);
 			obj.OnObjectChanged();
+		}
+
+		private void OnObjectSelected(VisualObject obj)
+		{
+			Panel.SelectedObject = obj.ParentObject;
 		}
 	}
 }
