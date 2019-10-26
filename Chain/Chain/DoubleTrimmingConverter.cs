@@ -10,13 +10,7 @@ namespace Chain
 		{
 			var stringParam = parameter?.ToString();
 			int.TryParse(stringParam, out var b);
-			var a = value as double?;
-			if (a == null)
-			{
-				return null;
-			}
-
-			return Math.Round((double)a, b);
+			return !(value is double a) ? (object)null : Math.Round((double)a, b);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

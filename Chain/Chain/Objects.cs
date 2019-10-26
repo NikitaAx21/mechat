@@ -50,12 +50,8 @@ namespace Chain
 
 		public void NotifyPropertyChanged<T>(Expression<Func<T>> property)
 		{
-			var handler = PropertyChanged;
-			if (handler != null)
-			{
-				string propertyName = ((MemberExpression)property.Body).Member.Name;
-				handler(this, new PropertyChangedEventArgs(propertyName));
-			}
+			var propertyName = ((MemberExpression)property.Body).Member.Name;
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 

@@ -14,12 +14,11 @@ namespace Chain
 		public List<Object> ChainList;
 		private readonly Panel _panel;
 		private string _path = "";
-		private Point _centerPoint = new Point();
+		private Point _centerPoint;
 
 		public ListManager(Panel panel)
 		{
 			ChainList = new List<Object>();
-
 			_panel = panel;
 		}
 
@@ -65,9 +64,7 @@ namespace Chain
 					MessageBox.Show("Выберите файл с расширением \".xml\".");
 			}
 			else
-			{
 				return;
-			}
 
 			if (string.IsNullOrEmpty(_path))
 				return;
@@ -120,27 +117,26 @@ namespace Chain
 						if (node.Attributes == null)
 							continue;
 
-						foreach (XmlNode attribut in node.Attributes)
+						foreach (XmlNode attribute in node.Attributes)
 						{
-							if (property.Name != attribut.Name)
+							if (property.Name != attribute.Name)
 								continue;
 
 							var valueType = property.PropertyType.Name;
 							switch (valueType)
 							{
 								case "Double":
-									var attr1 = double.Parse(attribut.Value, CultureInfo.InvariantCulture);
+									var attr1 = double.Parse(attribute.Value, CultureInfo.InvariantCulture);
 									property.SetValue(obj, attr1);
 									break;
 
 								case "Boolean":
-									var attr2 = bool.Parse(attribut.Value);
+									var attr2 = bool.Parse(attribute.Value);
 									property.SetValue(obj, attr2);
 									break;
 
 								default:
-
-									break; //???
+									throw new Exception("Некорректное содержимое файла.");
 							}
 
 							break;
@@ -173,7 +169,7 @@ namespace Chain
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(e.Message, "Ошибка при загрузке фафла");
+				MessageBox.Show(e.Message, "Ошибка при загрузке файла");
 			}
 		}
 
@@ -207,7 +203,7 @@ namespace Chain
 						tag = "Segment";
 					}
 
-					var Element = new XElement(tag);
+					var xElement = new XElement(tag);
 
 					var myClassType = obj.GetType();
 					var properties = myClassType.GetProperties();
@@ -217,11 +213,11 @@ namespace Chain
 						if (property.PropertyType.Name != "Boolean" && property.PropertyType.Name != "Double")
 							continue;
 
-						var attrib = new XAttribute(property.Name, property.GetValue(obj, null));
-						Element.Add(attrib);
+						var attribute = new XAttribute(property.Name, property.GetValue(obj, null));
+						xElement.Add(attribute);
 					}
 
-					firstElement.Add(Element);
+					firstElement.Add(xElement);
 				}
 			}
 			catch
@@ -456,7 +452,7 @@ namespace Chain
 			}
 
 			RescaleIfNeeded();
-			СhainObjects(obj.Id);
+			ConnectObjects(obj.Id);
 			SetInterseced();
 		}
 
@@ -465,7 +461,7 @@ namespace Chain
 			_panel.SelectedObject = obj.ParentObject;
 		}
 
-		private void СhainObjects(int startId)
+		private void ConnectObjects(int startId)
 		{
 			for (var i = startId; i < ChainList.Count; i++)
 			{

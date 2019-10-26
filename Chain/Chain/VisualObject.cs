@@ -26,24 +26,12 @@ namespace Chain
 			get => _interseced;
 			set
 			{
-				/*var isVisualSegment = this is VisualSegment;
-				if (!isVisualSegment)
-					return;
-
-				var segment = ParentObject as Segment;
-				if (segment == null || segment.Efemerik)
-					return;*/
-
 				_interseced = value;
 				NotifyPropertyChanged(() => Interseced);
 			}
 		}
 
 		public Object ParentObject { get; set; }
-
-		public VisualObject()
-		{
-		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
