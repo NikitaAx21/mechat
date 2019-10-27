@@ -22,42 +22,48 @@ namespace Chain
 		/// <param name="tM"></param>
 		/// <param name="cM"></param>
 		/// <returns></returns>
-		public Point Mass_center(List<Object> list)
+		public static Point Mass_center(List<Object> list)
 		{
-			double coordX = 0;
-			double coordY = 0;
-			double mass = 0;
-			const double defaultX = 0;
-			const double defaultY = 0;
+            VisualJoint defaultJoint = list[0].Visual as VisualJoint;
 
-			for (var i = 0; i < list.Count; i++)
+            double coordX = 0;
+            double coordY = 0;
+            double mass = 0;
+            double defaultX = defaultJoint.Coordinate.X;//?
+            double defaultY = defaultJoint.Coordinate.Y; //?
+
+            for (var i = 0; i < list.Count; i++)
 			{
 				mass += list[i].Mass;
 
 				if (list[i] is Joint)
 				{
-					if (i == 0)
+                    VisualJoint VJoint = list[i].Visual as VisualJoint;
+
+                    if (i == 0)
 					{
-						coordX += defaultX * list[i].Mass; //---
-						coordY += defaultY * list[i].Mass; //---
+						coordX += defaultX * list[i].Mass;
+						coordY += defaultY * list[i].Mass;
 					}
 					else
 					{
-						coordX += Calculations.CoordMas[i].X * list[i].Mass;
-						coordY += Calculations.CoordMas[i].Y * list[i].Mass;
+						coordX += VJoint.Coordinate.X * list[i].Mass;
+						coordY += VJoint.Coordinate.Y * list[i].Mass;
 					}
 				}
 				else
 				{
-					if (i == 1)
+                    VisualSegment VSegment = list[i].Visual as VisualSegment;
+
+                    if (i == 1)
 					{
-						coordX += (Calculations.CoordMas[i].X + defaultX) / 2 * list[i].Mass; //---
-						coordY += (Calculations.CoordMas[i].Y + defaultY) / 2 * list[i].Mass; //---
+						coordX += (VSegment.End.X + defaultX) / 2 * list[i].Mass;
+						coordY += (VSegment.End.Y + defaultY) / 2 * list[i].Mass;
 					}
 					else
 					{
-						coordX += (Calculations.CoordMas[i].X + Calculations.CoordMas[i - 2].X) / 2 * list[i].Mass;
-						coordY += (Calculations.CoordMas[i].Y + Calculations.CoordMas[i - 2].Y) / 2 * list[i].Mass;
+						coordX += (VSegment.End.X + VSegment.Begin.X) / 2 * list[i].Mass;
+						coordY += (VSegment.End.Y + VSegment.Begin.Y) / 2 * list[i].Mass;
 					}
 				}
 			}
@@ -67,8 +73,8 @@ namespace Chain
 
 			var allMassCenter = new Point
 			{
-				X = coordX,
-				Y = coordY
+				X = coordX-10,
+				Y = coordY-10
 			};
 
 			return allMassCenter;

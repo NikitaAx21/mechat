@@ -255,9 +255,17 @@ namespace Chain
 			ObjectSelected?.Invoke(obj);
 		}
 
+
+        public event Action<Thickness> MarginCM_Change;
+
 		private void OnObjectChanged(Object obj)
 		{
 			ObjectChanged?.Invoke(obj);
-		}
+            //=========================
+            Point MC_coord = Calculations.Mass_center(ChainList);
+            //=========================
+            Thickness MarginCM = new Thickness(MC_coord.X, MC_coord.Y, 0,0);
+            MarginCM_Change.Invoke(MarginCM);
+        }
 	}
 }

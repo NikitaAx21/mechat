@@ -12,7 +12,8 @@
 		Height="450"
 		Width="800">
 	<Window.Resources>
-		<local:NullToBoolConverter x:Key="NullToBoolConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:NullToBoolConverter x:Key="NullToBoolConverter" />
 	</Window.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -36,8 +37,16 @@
 						HorizontalAlignment="Stretch"
 						SizeChanged="CenterCircleSetPosition"
 						Loaded="CenterCircleSetPosition"
-						Name="Canvas" />
-			</Border>
+						Name="Canvas" >
+
+                    <Ellipse Fill="#F0FF0000" Name="CM" HorizontalAlignment="Left"
+                             Height="20" Margin="{Binding MarginCM, Mode=TwoWay}"
+                             Stroke="Black" VerticalAlignment="Top" Width="20" 
+                             Visibility="{Binding ElementName=CheckBox_CM, Mode=TwoWay, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+
+                </Canvas>
+            </Border>
 			<Border Background="Cornsilk"
 					Grid.Row="1"
 					Margin="0,8,0,0"
@@ -64,7 +73,10 @@
 					<CheckBox Content="Отображать центры масс"
 							  VerticalAlignment="Center"
 							  Margin="5"
-							  Grid.Column="2" />
+							  Grid.Column="2" 
+                              
+                              Name="CheckBox_CM"
+                              />
 					<StackPanel Grid.Column="3"
 								Margin="5,0"
 								VerticalAlignment="Stretch"

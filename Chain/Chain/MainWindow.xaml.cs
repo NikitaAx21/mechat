@@ -1,13 +1,15 @@
 ﻿using System.Linq;
 using System.Windows;
+using System.ComponentModel;
+
 
 namespace Chain
 {
 	/// <summary>
 	/// Логика взаимодействия для MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
-	{
+	public partial class MainWindow : Window, INotifyPropertyChanged
+    {
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -23,10 +25,39 @@ namespace Chain
 
 			Panel.SelectedObject = center;
 			Canvas.Children.Add(center.Visual);
-		}
+            LManager.MarginCM_Change += MarginCM_Change;
 
-		public ListManager LManager;
+        }
 		private Renderer _renderer;
+		private Renderer _renderer;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private Thickness _marginCM;
+        public Thickness MarginCM
+        {
+            get { return _marginCM; }
+            set
+            {
+                _marginCM = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(nameof(MarginCM)));
+
+            }
+        }
+
+        public void MarginCM_Change(Thickness e)
+        {
+            MarginCM = e;
+        }
+
+
+
+        public ListManager LManager;
 
 		private void SaveList(object sender, RoutedEventArgs e)
 		{
