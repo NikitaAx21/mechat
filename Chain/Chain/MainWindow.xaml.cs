@@ -27,7 +27,7 @@ namespace Chain
 			Canvas.Children.Add(center.Visual);
             LManager.MarginCM_Change += MarginCM_Change;
 
-            EllipseHeight = 20;
+            CMexist = true;
 
         }
 		private Renderer _renderer;
@@ -56,16 +56,21 @@ namespace Chain
             MarginCM = e;
         }
 
-        private int _ellipseHeight;
-        public int EllipseHeight
+        private bool _cmexist;
+        public bool CMexist
         {
-            get { return _ellipseHeight; }
+            get { return _cmexist; }
             set
             {
-                _ellipseHeight = value;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(nameof(EllipseHeight)));
+                _cmexist = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(nameof(CMexist)));
 
             }
+        }
+
+        private bool CMexist_Check()
+        {
+            return LManager.ChainList.Count == 0 ? false : true;
         }
 
         public ListManager LManager;
@@ -104,7 +109,11 @@ namespace Chain
 			}
 		}
 
-		private void DeleteObject(object sender, RoutedEventArgs e)
+
+        
+
+
+        private void DeleteObject(object sender, RoutedEventArgs e)
 		{
 			foreach (var o in LManager.ChainList.Where(o => o.Id >= Panel.SelectedObject.Id))
 			{
@@ -114,14 +123,11 @@ namespace Chain
 			LManager.Delete(Panel.SelectedObject.Id);
 			Panel.SelectedObject = LManager.ChainList.LastOrDefault();
             //=====================================
-            Point MC_coord = Calculations.Mass_center(LManager.ChainList);
-            //=========================
-            Thickness MarginCM = new Thickness(MC_coord.X, MC_coord.Y, 0, 0);
-            MarginCM_Change(MarginCM);
-            if (LManager.ChainList.Count == 0)
-                EllipseHeight = 0;
-            else
-                EllipseHeight = 20;
+
+
+            MarginCM_Change(LManager.MarginCM());
+
+            CMexist = CMexist_Check();
 
 
         }
@@ -132,7 +138,10 @@ namespace Chain
 			var obj = LManager.ChainList.Last();
 			Canvas.Children.Add(obj.Visual);
 			obj.OnObjectChanged();
-		}
+
+            CMexist = CMexist_Check();
+
+        }
 
 		private void OnObjectSelected(VisualObject obj)
 		{

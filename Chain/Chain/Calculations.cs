@@ -24,13 +24,21 @@ namespace Chain
 		/// <returns></returns>
 		public static Point Mass_center(List<Object> list)
 		{
-            //VisualJoint defaultJoint = list[0].Visual as VisualJoint;
+
+            VisualJoint defaultJoint;
 
             double coordX = 0;
             double coordY = 0;
             double mass = 0;
-            double defaultX = 234;// defaultJoint.Coordinate.X;//?
-            double defaultY = 163;// defaultJoint.Coordinate.Y; //?
+            double defaultX = 0;
+            double defaultY = 0;
+
+            if (list.Count != 0)
+            {
+                defaultJoint = list[0].Visual as VisualJoint;
+                defaultX = defaultJoint.Coordinate.X;//?
+                defaultY = defaultJoint.Coordinate.Y; //?
+            }
 
             for (var i = 0; i < list.Count; i++)
 			{
@@ -85,6 +93,8 @@ namespace Chain
 
 			return allMassCenter;
 		}
+
+
 
 		public static double DegreeToRadian(double A)
 		{

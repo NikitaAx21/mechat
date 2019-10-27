@@ -33,17 +33,33 @@
 					CornerRadius="2"
 					HorizontalAlignment="Stretch"
 					Background="Transparent">
-				<Canvas VerticalAlignment="Stretch"
+                <Canvas VerticalAlignment="Stretch"
 						HorizontalAlignment="Stretch"
 						SizeChanged="CenterCircleSetPosition"
 						Loaded="CenterCircleSetPosition"
 						Name="Canvas" >
 
                     <Ellipse Fill="#F0FF0000" Name="CM" HorizontalAlignment="Left"
-                             Height="{Binding EllipseHeight, Mode=TwoWay}" Margin="{Binding MarginCM, Mode=TwoWay}"
-                             Stroke="Black" VerticalAlignment="Top" Width="20" 
-                             Visibility="{Binding ElementName=CheckBox_CM, Mode=TwoWay, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                             Height="20" Margin="{Binding MarginCM, Mode=TwoWay}"
+                             Stroke="Black" VerticalAlignment="Top" Width="20" >
+                        <!--Visibility="{Binding ElementName=CheckBox_CM, Mode=TwoWay, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">-->
+                        <!--"{Binding EllipseHeight, Mode=TwoWay}"-->
+                            <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Visibility" Value="Hidden" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding ElementName=CheckBox_CM, Path=IsChecked}" Value="True" />
+                                            <Condition Binding="{Binding CMexist, Mode=TwoWay}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
 
+                    </Ellipse>
 
                 </Canvas>
             </Border>

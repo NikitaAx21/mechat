@@ -258,14 +258,20 @@ namespace Chain
 
         public event Action<Thickness> MarginCM_Change;
 
-		private void OnObjectChanged(Object obj)
+        public Thickness MarginCM()
+        {
+            Point MC_coord = Calculations.Mass_center(ChainList);
+            //=========================
+            Thickness _marginCM = new Thickness(MC_coord.X, MC_coord.Y, 0, 0);
+            return _marginCM;
+        }
+
+        private void OnObjectChanged(Object obj)
 		{
 			ObjectChanged?.Invoke(obj);
             //=========================
-            Point MC_coord = Calculations.Mass_center(ChainList);
-            //=========================
-            Thickness MarginCM = new Thickness(MC_coord.X, MC_coord.Y, 0,0);
-            MarginCM_Change.Invoke(MarginCM);
+            
+            MarginCM_Change.Invoke(MarginCM());
         }
 	}
 }
