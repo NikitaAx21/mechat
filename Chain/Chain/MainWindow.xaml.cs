@@ -29,9 +29,8 @@ namespace Chain
 
         }
 		private Renderer _renderer;
-		private Renderer _renderer;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
