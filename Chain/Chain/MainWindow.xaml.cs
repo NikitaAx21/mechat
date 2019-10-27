@@ -27,6 +27,8 @@ namespace Chain
 			Canvas.Children.Add(center.Visual);
             LManager.MarginCM_Change += MarginCM_Change;
 
+            EllipseHeight = 20;
+
         }
 		private Renderer _renderer;
 
@@ -54,7 +56,17 @@ namespace Chain
             MarginCM = e;
         }
 
+        private int _ellipseHeight;
+        public int EllipseHeight
+        {
+            get { return _ellipseHeight; }
+            set
+            {
+                _ellipseHeight = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(nameof(EllipseHeight)));
 
+            }
+        }
 
         public ListManager LManager;
 
@@ -101,9 +113,20 @@ namespace Chain
 
 			LManager.Delete(Panel.SelectedObject.Id);
 			Panel.SelectedObject = LManager.ChainList.LastOrDefault();
-		}
+            //=====================================
+            Point MC_coord = Calculations.Mass_center(LManager.ChainList);
+            //=========================
+            Thickness MarginCM = new Thickness(MC_coord.X, MC_coord.Y, 0, 0);
+            MarginCM_Change(MarginCM);
+            if (LManager.ChainList.Count == 0)
+                EllipseHeight = 0;
+            else
+                EllipseHeight = 20;
 
-		private void AddObject(object sender, RoutedEventArgs e)
+
+        }
+
+        private void AddObject(object sender, RoutedEventArgs e)
 		{
 			LManager.Add();
 			var obj = LManager.ChainList.Last();

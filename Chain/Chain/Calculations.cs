@@ -24,13 +24,13 @@ namespace Chain
 		/// <returns></returns>
 		public static Point Mass_center(List<Object> list)
 		{
-            VisualJoint defaultJoint = list[0].Visual as VisualJoint;
+            //VisualJoint defaultJoint = list[0].Visual as VisualJoint;
 
             double coordX = 0;
             double coordY = 0;
             double mass = 0;
-            double defaultX = defaultJoint.Coordinate.X;//?
-            double defaultY = defaultJoint.Coordinate.Y; //?
+            double defaultX = 234;// defaultJoint.Coordinate.X;//?
+            double defaultY = 163;// defaultJoint.Coordinate.Y; //?
 
             for (var i = 0; i < list.Count; i++)
 			{
@@ -70,6 +70,12 @@ namespace Chain
 
 			coordX /= mass;
 			coordY /= mass;
+
+            /*if (list.Count == 0)
+            {
+                coordX = defaultX;
+                coordY = defaultY;
+            }*/
 
 			var allMassCenter = new Point
 			{

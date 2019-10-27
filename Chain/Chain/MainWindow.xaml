@@ -40,7 +40,7 @@
 						Name="Canvas" >
 
                     <Ellipse Fill="#F0FF0000" Name="CM" HorizontalAlignment="Left"
-                             Height="20" Margin="{Binding MarginCM, Mode=TwoWay}"
+                             Height="{Binding EllipseHeight, Mode=TwoWay}" Margin="{Binding MarginCM, Mode=TwoWay}"
                              Stroke="Black" VerticalAlignment="Top" Width="20" 
                              Visibility="{Binding ElementName=CheckBox_CM, Mode=TwoWay, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
