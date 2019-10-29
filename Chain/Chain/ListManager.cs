@@ -270,8 +270,9 @@ namespace Chain
 		{
 			ObjectChanged?.Invoke(obj);
             //=========================
-            
-            MarginCM_Change.Invoke(MarginCM());
+            Thickness RealCM_Margin = MarginCM();
+            MarginCM_Change.Invoke(RealCM_Margin);
+
         }
 	}
 }

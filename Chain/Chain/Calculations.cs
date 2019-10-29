@@ -6,7 +6,14 @@ namespace Chain
 {
 	public class Calculations
 	{
-		private double _dX;
+
+        Calculations()
+        {
+            ChainHeavy = true;
+        }
+
+
+        private double _dX;
 		private double _dY;
 		public double[,] matr = new double[3, 3];
 		public double[] vect = new double[3];
@@ -76,16 +83,12 @@ namespace Chain
 				}
 			}
 
-			coordX /= mass;
+            ChainHeavy = !(mass <= 0);
+
+            coordX /= mass;
 			coordY /= mass;
 
-            /*if (list.Count == 0)
-            {
-                coordX = defaultX;
-                coordY = defaultY;
-            }*/
-
-			var allMassCenter = new Point
+            var allMassCenter = new Point
 			{
 				X = coordX-10,
 				Y = coordY-10
@@ -94,7 +97,7 @@ namespace Chain
 			return allMassCenter;
 		}
 
-
+        public static bool ChainHeavy;
 
 		public static double DegreeToRadian(double A)
 		{

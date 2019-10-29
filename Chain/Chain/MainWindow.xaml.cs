@@ -54,6 +54,7 @@ namespace Chain
         public void MarginCM_Change(Thickness e)
         {
             MarginCM = e;
+            CMexist_Check();
         }
 
         private bool _cmexist;
@@ -68,9 +69,10 @@ namespace Chain
             }
         }
 
-        private bool CMexist_Check()
+        private void CMexist_Check()
         {
-            return LManager.ChainList.Count == 0 ? false : true;
+
+            CMexist= !(LManager.ChainList.Count == 0) && Calculations.ChainHeavy;
         }
 
         public ListManager LManager;
@@ -127,8 +129,7 @@ namespace Chain
 
             MarginCM_Change(LManager.MarginCM());
 
-            CMexist = CMexist_Check();
-
+            CMexist_Check();
 
         }
 
@@ -139,8 +140,7 @@ namespace Chain
 			Canvas.Children.Add(obj.Visual);
 			obj.OnObjectChanged();
 
-            CMexist = CMexist_Check();
-
+            CMexist_Check();
         }
 
 		private void OnObjectSelected(VisualObject obj)
