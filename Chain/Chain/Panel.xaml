@@ -74,7 +74,7 @@
 								   HorizontalAlignment="Center"
 								   Text="Длина сегмента" />
 						<Slider Value="{Binding SelectedSegment.Length, Mode=TwoWay}"
-								Minimum="0"
+								Minimum="1"
 								Maximum="200" />
 					</StackPanel>
 				</Grid>

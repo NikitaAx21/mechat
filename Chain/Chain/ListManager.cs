@@ -157,8 +157,18 @@ namespace Chain
 							throw new Exception("Некорректное содержимое файла. Не верные параметры углов.");
 						}
 					}
+                    if (node.Name == "Segment")
+                    {
+                        if (!(obj is Segment seg))
+                            continue;
 
-					proxyChainList.Add(obj);
+                        if (seg.Length<1)
+                        {
+                            throw new Exception("Некорректное содержимое файла. Не верные длины сегментов.");
+                        }
+                    }
+
+                    proxyChainList.Add(obj);
 				}
 
 				Delete(0);
