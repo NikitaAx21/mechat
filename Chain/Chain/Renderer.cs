@@ -229,8 +229,8 @@ namespace Chain
 					}
 				}
 			}
-
-			RescaleIfNeeded();
+            if (_listManager.ChainList.Count > 1)
+      			RescaleIfNeeded();
 			ConnectObjects(obj.Id);
 			SetInterseced();
 		}
