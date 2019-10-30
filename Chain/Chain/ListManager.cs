@@ -38,6 +38,7 @@ namespace Chain
 			obj.Visual.OnSelectedChanged += Select;
 			obj.ObjectChanged += OnObjectChanged;
 			ChainList.Add(obj);
+			Calculations.CoordMas.Add(new Point(0,0));
 		}
 
 		public void Delete(int id)

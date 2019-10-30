@@ -21,6 +21,16 @@
 				<Setter Property="Fill"
 						Value="Brown" />
 			</DataTrigger>
+			<MultiDataTrigger>
+				<MultiDataTrigger.Conditions>
+					<Condition Binding="{Binding Interseced}"
+						 Value="True" />
+					<Condition Binding="{Binding IsSelected}"
+							   Value="True" />
+				</MultiDataTrigger.Conditions>
+				<Setter Property="Fill"
+						Value="Chocolate" />
+			</MultiDataTrigger>
 		</Style.Triggers>
 	</Style>
 </ResourceDictionary>
