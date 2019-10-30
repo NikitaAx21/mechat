@@ -98,6 +98,7 @@ namespace Chain
 			set
 			{
 				_efemerik = value;
+				OnObjectChanged();
 				NotifyPropertyChanged(() => Efemerik);
 			}
 		}
